@@ -3,9 +3,22 @@ HOST: https://api.test.bitmark.com/v1/
 
 # Introduction
 
-Bitmark is the property system for the digital environment. It enables individuals to claim ownership over personal data and digital assets.
+Bitmark is the universal property system for the digital environment. Bitmark makes simple tools to empower anyone to assert ownership over their digital lives and take advantage of the value they create online. The Bitmark system allows individuals to derive value from digital assets and data just as we do from the things we own in the physical world — selling, buying, transferring, donating, licensing, passing down, protecting, and much more.
 
-# Common Techniques
+The Bitmark Core API is an open REST API that provides software developers a simple interface to read from and write to the open-soure Bitmark blockchain. The Core API allows developers to query the blockchain for assets and bitmarks meeting specified criteria, as well as providing basic transaction functionality, such as bitmark issuances and bitmark transfers.
+
+## Base URL 
+
+All URLs referenced in this documentation have the following base URL:
+
+```
+https://api.test.bitmark.com/v1/
+```
+The Bitmark Core API is served over HTTPS to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
+
+
+
+# Conventions
 
 ## Varint encoding
 
@@ -46,7 +59,7 @@ Represents a bitmark account and is needed to sign the transactions (asset, issu
 
 ## Private Key
 
-Currently, Bitmark is using ED25519 to create the key pair. Bitmark private key is the combination of 32-random-byte seed (or secret key) and 32 bytes public key.
+Currently, Bitmark is using Ed25519 to create the key pair. Bitmark private key is the combination of 32-random-byte seed (or secret key) and 32 bytes public key.
 
 **KIF (Key Imported Format)**
 
