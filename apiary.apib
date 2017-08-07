@@ -16,7 +16,7 @@ https://api.test.bitmark.com/v1/
 ```
 The Bitmark Core API is served over HTTPS to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
 
-## Accountstes
+## Accounts
 
 Represents a bitmark account and is needed to sign the transactions (asset, issuance, and transfer).
 
@@ -24,25 +24,7 @@ Represents a bitmark account and is needed to sign the transactions (asset, issu
 
 Currently, Bitmark is using Ed25519 to create the key pair. Bitmark private key is the combination of 32-random-byte seed (or secret key) and 32 bytes public key.
 
-**KIF (Key Imported Format)**
 
-KIF is the standard format to export and import a single key into the application.
-
-The KIF is constructed as follows:
-
-- **Key variant value (keyVariant)**
-    - `1` bit determines the key part (private key = 0x00)
-    - `1` bit determines the network value (livenet = 0, testnet = 1)
-    - `2` zero bit buffer
-    - `3` bit determines the key type (key algorithm)
-- **Seed** — (32 bytes)
-- **Checksum** — `sha3_256(varint(keyVariant) + seed).slice(0, 4)`
-
-In summary:
-
-```
-kif = varint(keyVariantValue) + seed + checksum
-```
 
 ### Address (Account Number)
 
@@ -66,6 +48,27 @@ address = varint(keyVariant) + publicKey + checksum
 
 
 ## Conventions
+
+
+### KIF (Key Import Format)
+
+KIF is the standard format to export and import a single key into the application.
+
+The KIF is constructed as follows:
+
+- **Key variant value (keyVariant)**
+    - `1` bit determines the key part (private key = 0x00)
+    - `1` bit determines the network value (livenet = 0, testnet = 1)
+    - `2` zero bit buffer
+    - `3` bit determines the key type (key algorithm)
+- **Seed** — (32 bytes)
+- **Checksum** — `sha3_256(varint(keyVariant) + seed).slice(0, 4)`
+
+In summary:
+
+```
+kif = varint(keyVariantValue) + seed + checksum
+```
 
 ### Varint encoding
 
@@ -135,7 +138,7 @@ The asset database record is returned as the result of API request which has mor
 
 - is there a method for submitting ... or?
 
-## Querying the for a specific asset [GET /assets/{asset_id}]
+## Querying for a specific asset [GET /assets/{asset_id}]
 
 + Parameters
 
@@ -273,9 +276,7 @@ Note: Currently only the first 100 latest assets are returned
 
 lorem ipsum
 
-## Issuing a new bitmark [/issue]
-
-### Issuing a new bitmark [POST]
+## Issuing a new bitmark [POST /issue]
 
 It will return you a list of transaction id if the request has submmitted to the blockchain.
 
@@ -377,11 +378,9 @@ The issue records is returned by the API call `/bitmarks`. Its data is completel
 
 
 
-## Transfering a bitmark [/transfer]
+## Transfering a bitmark [POST /transfer]
 
-### Transfering a bitmark [POST]
-
-It will return you a transaction id if the request has submmitted to the blockchain.
+It will return a transaction id if the request has submmitted to the blockchain.
 
 
 #### PARAMETERS 
@@ -489,9 +488,7 @@ The transfer records is returned by the API call `/bitmarks`. It has more attrib
             }
 
 
-## Querying for a Specific Bitmark [/bitmarks/{bitmark_txid}{?asset,provenance}]
-
-### Querying for a Specific Bitmark [GET]
+## Querying for a specific bitmark [GET /bitmarks/{bitmark_txid}{?asset,provenance}]
 
 Queries the Bitmark blockchain ... 
 
@@ -564,9 +561,7 @@ Queries the Bitmark blockchain ...
             }
         }
  
-## Querying for a Collection of Bitmarks [/bitmarks{?asset_id,issuer,owner,asset,pending,offset,direction,limit}]
-
-### Querying for a Collection of Bitmarks [GET]
+## Querying for a collection of bitmarks [GET /bitmarks{?asset_id,issuer,owner,asset,pending,offset,direction,limit}]
 
 Queries the Bitmark blockchain ... 
 
