@@ -3,9 +3,9 @@ HOST: https://api.test.bitmark.com/v1/
 
 # Introduction
 
-Bitmark is the universal property system for the digital environment. Bitmark makes simple tools to empower anyone to assert ownership over their digital lives and take advantage of the value they create online. The Bitmark system allows individuals to derive value from digital assets and data just as we do from the things we own in the physical world — selling, buying, transferring, donating, licensing, passing down, protecting, and much more.
+Bitmark is the universal property system for the digital environment. Bitmark makes simple tools that empower anyone to assert ownership over their digital lives and take advantage of the value they create online. The Bitmark system allows individuals to derive value from digital assets and data just as we do from the things we own in the physical world — selling, buying, transferring, donating, licensing, passing down, protecting, and much more.
 
-The Bitmark Core API is an open REST API that provides software developers a simple interface to read from and write to the open-soure Bitmark blockchain. The Core API allows developers to query the blockchain for assets and bitmarks meeting specified criteria, as well as providing basic transaction functionality, such as bitmark issuances and bitmark transfers.
+The Bitmark Core API is an open REST API that provides software developers a friendly interface to read from and write to the open-soure Bitmark blockchain. The Core API allows developers to query the blockchain for assets and bitmarks meeting specified criteria, as well as providing basic transaction functionality, such as bitmark issuances and bitmark transfers.
 
 ## Base URL 
 
@@ -15,6 +15,57 @@ All URLs referenced in this documentation have the following base URL:
 https://api.test.bitmark.com/v1/
 ```
 The Bitmark Core API is served over HTTPS to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
+
+
+--- 
+
+# Accounts
+
+## The Account object
+
+lorem ipsum — a record type
+
+### ATTRIBUTES
+
+
+
+---
+
+
+
+---
+
+# Bitmarks
+
+
+---
+
+## Issuance
+
+**Attributes**
+- `txid` — sha3_256 hash of the packed record
+- `asset` - asset id
+- `owner` - bitmark address
+- `nonce` — uint64 number to distinguish between different issuances
+
+**Packing the record**
+The binary format of an issuance record is built by concatenating the following value respectively:
+
+- `varint(0x03)`— binary value (the prefix `0x03` identifies the record as an issuance record)
+- `asset` — binary value
+- `owner` — binary value (address without checksum)
+- `varint(nonce)` — buffer
+
+**Signature**
+The owner needs to sign the packed record to create a valid signature.
+
+**Payload**
+The payload is made by appending the signature after the packed record
+
+**Database record**
+The issue records is returned by the API call `/bitmarks`. Its data is completely as a normal transfer to the issuer, please look at transfer record for more details.
+
+
 
 
 
@@ -108,69 +159,10 @@ There are 3 types of records in bitmark system:
 - Issue
 - Transfer
 
-## Asset
-
-**Attributes**
-- `id` - sha3_256 hash of the fingerprint
-- `name` - the maximum is 64 unicode characters
-- `metadata` (optional) - the maximum is 2048 unicode characters
-- `fingerprint` - the maximum is 1024 unicode characters
-- `registrant`
-- `signature`
-
-Metadata is a key-value dictionary represented by a string with the following format:
-
-`[key][separator][value][separator][key][separator][value]`
-
-with the separator as the unicode character `0x0000`.
-
-**Packing the record for signing**
-The binary format of an asset record is built by concatenating the following values respectively:
-
-- `varint(0x02)` — binary value (the prefix `0x02` identifies the record as an issuance record)
-- `name` — string value
-- `fingerprint`— string value
-- `metadata` — string value
-- `registrant`— binary value (address without checksum)
-
-**Signature**
-
-The registrant needs to sign the packed record to create a valid signature.
-
-**Payload**
-The payload is made by appending the signature after the packed record
-
-**Database record**
-The asset record is returned as the result of API request which has more details about the assets.
-
-(TBA)
 
 
 
-## Issuance
 
-**Attributes**
-- `txid` — sha3_256 hash of the packed record
-- `asset` - asset id
-- `owner` - bitmark address
-- `nonce` — uint64 number to distinguish between different issuances
-
-**Packing the record**
-The binary format of an issuance record is built by concatenating the following value respectively:
-
-- `varint(0x03)`— binary value (the prefix `0x03` identifies the record as an issuance record)
-- `asset` — binary value
-- `owner` — binary value (address without checksum)
-- `varint(nonce)` — buffer
-
-**Signature**
-The owner needs to sign the packed record to create a valid signature.
-
-**Payload**
-The payload is made by appending the signature after the packed record
-
-**Database record**
-The issue records is returned by the API call `/bitmarks`. Its data is completely as a normal transfer to the issuer, please look at transfer record for more details.
 
 ## Transfer
 
@@ -206,160 +198,46 @@ The transfer records is returned by the API call `/bitmarks`. It has more attrib
 
 (TBA)
 
-
-# Group Query Blockchain
-
-## Specific Bitmark [GET /bitmarks/{bitmark_txid}{?asset,provenance}]
-
-+ Parameters
-
-    + bitmark_txid: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03 (string, required) - TXID of the bitmark in the form of hex string
-    + provenance: true (boolean, optional) - Ask the server to also return the bitmark provenance
-        + Default: false
-    + asset: true (boolean, optional) - Ask the server to also return the asset record
-        + Default: false
-
-+ Request
-
-        + bitmark_txid: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03
-        + provenance: true
-        + asset: true
-
-+ Response 200 (application/json)
-
-        {
-            "bitmark": {
-                "txid": "ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03",
-                "owner": "eA3SzibojnTF34YAua8MyYDoRmVhAUzFxuQiPuVvYrt9XMKak1",
-                "signature": "dcaabcb436581c4042c8b7fd784255693979a22749c069ce3851d4c76a63efd145788feec4d6fd439a4165beb69a137f97e949e7eff1c2295fce48939bedf80d",
-                "asset_id": "2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e",
-                "issue_txid": "ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03",
-                "issuer": "eA3SzibojnTF34YAua8MyYDoRmVhAUzFxuQiPuVvYrt9XMKak1",
-                "issued_at": "2017-06-12 09:54:59+00",
-                "previous_txid": null,
-                "head": "head",
-                "status": "confirmed",
-                "pay_id": "",
-                "block_number": "3690",
-                "block_offset": "1",
-                "expires_at": null,
-                "created_at": "2017-06-12 09:54:59+00",
-                "modified_at": "2017-06-12 10:10:34.06562+00",
-                "provenance": [
-                    {
-                        "txid": "ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03",
-                        "owner": "eA3SzibojnTF34YAua8MyYDoRmVhAUzFxuQiPuVvYrt9XMKak1",
-                        "status": "confirmed",
-                        "created_at": "2017-06-12 09:54:59+00"
-                    }
-                ]
-            },
-            "asset": {
-                "id": "2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e",
-                "name": "all rise",
-                "fingerprint": "013a13f34c7bd7ddd970c26d8ee6eea8685362554189219f2dc2833e6f5e1347e9d35365ad8bc71023d9d67acbee8060e9da40bac094193353b6546367b85193cc",
-                "metadata": {
-                "Creator": "ai biet"
-                },
-                "registrant": "e3iQ86Hdj8owb8xg31QqUqanptPoQLzt2UvXQ5CB2Jf5wyRKLk",
-                "signature": "2488af1e00a6a00aedbf5f54b17e1ed3a3689729aa3db02d9f3709b05512f7623986ff660a94d3b30845e55787da3e722885a87141e0319e0675c6499093b200",
-                "status": "confirmed",
-                "block_number": "3304",
-                "block_offset": "1",
-                "expires_at": null
-            }
-        }
-
-## Bitmark Collection [GET /bitmarks{?asset_id,issuer,owner,asset,pending,offset,direction,limit}]
-
-Get all the bitmarks that changed in a specific range of time that match the given conditions.
-
-+ Parameters
-    + asset_id: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e (string, optional) - Filter bitmarks by asset id
-    + issuer: eA3SzibojnTF34YAua8MyYDoRmVhAUzFxuQiPuVvYrt9XMKak1 (string, optional) - Filter bitmarks by issuer
-    + owner: eA3SzibojnTF34YAua8MyYDoRmVhAUzFxuQiPuVvYrt9XMKak1 (string, optional) - Filter bitmarks by owner
-    + asset: true (string, optional) - Whether the api should return asset record
-        + Default: false
-    + pending: true (boolean, optional) - Whether the api should take pending bitmark into account
-        + Default: false
-    + direction: up (enum[string], optional)
-        + Default: down
-        + Members
-            + up
-            + down
-    + offset: `2017-06-27%2015%3A56%3A24.228717%2B07_b099bc995789fbae8245111f159b50293138fc6b6764b68d0850f411a97530d7` (string, optional) - The offset from which the bitmarks are returned. The offset value is built by {{bitmark.modified_at}}_{{bitmark.txid}}
-        E.g: To get a list of bitmarks that an account is owning, you first make the requestion with omitting offset. After getting a list of bitmarks, take the last bitmark and build the offset by {{bitmark.modified_at}}_{{bitmark.txid}} (e.g "2017-06-27 18:34:28.277054+07" + "_" + "c07018a9fa8e5df3c710c1d5d6ea64bae1aadb423ece811e8cc3722804c687eb", and then call the API again with this offset, you can get the next batch of bitmarks. (Note: Make sure you encode the parameter for URL)
-    + limit: 100 {number, optional) - limit the items returned, maximum is 100
-
-+ Request
-
-        + owner: fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY,
-        + asset: true
-        + direction: up
-        + offset: 2017-06-27%2015%3A56%3A24.228717%2B07_b099bc995789fbae8245111f159b50293138fc6b6764b68d0850f411a97530d7
+# Group Accounts
 
 
-+ Response 200 (application/json)
 
-        {
-            "bitmarks": [
-                {
-                "txid": "3b0b3e0780d0aa79d8692d82c73ad03220b7dfcbe2522e0046e86cacd075c7b6",
-                "owner": "fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY",
-                "signature": "4c1972f5545e6a6428905c7cecbeb91b43785e84dc7c22b9bb4be659a7f13efcdb9c8c2e6bc84a63dd0e3d3ecf85f215f74d5d32357a470336afae8281b27a01",
-                "asset_id": "5fb5801d85dfa1499109b1914913ae1613614d7b193780317a2842295bbac594fcf5dc7e10670395aacb9d8bdd6251e22a4a3f83d8d8ac4d82783ab4a62e2b94",
-                "issue_txid": "3b0b3e0780d0aa79d8692d82c73ad03220b7dfcbe2522e0046e86cacd075c7b6",
-                "issuer": "fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY",
-                "issued_at": "2017-06-27 18:32:59+07",
-                "previous_txid": null,
-                "head": "head",
-                "status": "confirmed",
-                "pay_id": "",
-                "block_number": "3909",
-                "block_offset": "2",
-                "expires_at": null,
-                "created_at": "2017-06-27 18:32:59+07",
-                "modified_at": "2017-06-27 18:34:28.277054+07"
-                },
-                {
-                "txid": "c07018a9fa8e5df3c710c1d5d6ea64bae1aadb423ece811e8cc3722804c687eb",
-                "owner": "fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY",
-                "signature": "4478e84158be525add93516800618a96dc242b9246c07ad5e45a6074060e8bec3fbd3f8eaffdd94dd513efdd350e6e475b0aad3dbdf77ef8c1b5e2c736eb970b",
-                "asset_id": "5fb5801d85dfa1499109b1914913ae1613614d7b193780317a2842295bbac594fcf5dc7e10670395aacb9d8bdd6251e22a4a3f83d8d8ac4d82783ab4a62e2b94",
-                "issue_txid": "c07018a9fa8e5df3c710c1d5d6ea64bae1aadb423ece811e8cc3722804c687eb",
-                "issuer": "fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY",
-                "issued_at": "2017-06-27 18:32:59+07",
-                "previous_txid": null,
-                "head": "head",
-                "status": "confirmed",
-                "pay_id": "",
-                "block_number": "3909",
-                "block_offset": "3",
-                "expires_at": null,
-                "created_at": "2017-06-27 18:32:59+07",
-                "modified_at": "2017-06-27 18:34:28.277054+07"
-                }
-            ],
-            "assets": [
-                {
-                "id": "5fb5801d85dfa1499109b1914913ae1613614d7b193780317a2842295bbac594fcf5dc7e10670395aacb9d8bdd6251e22a4a3f83d8d8ac4d82783ab4a62e2b94",
-                "name": "vien test 3.2 MB",
-                "fingerprint": "012bf7f9e3a85e8fbcb90df0caa895b696ce4ebf476840c32791a10276a2a09853e8e14172ab56f790665315f28b595bdbecd6e40c5c65fbe34eb333601919b17b",
-                "metadata": {
-                    "Contributor": "Vien Luong",
-                    "Description": "Bitmark testing"
-                },
-                "registrant": "fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY",
-                "signature": "3b6ec72f88d121e7ba6dc7e132c7ec6edffe21db8593e2db4ba99baeb029407aef6c140a82c45854e1b486a50eb8e798bbbe5061c921569144be8d99e7bc2303",
-                "status": "confirmed",
-                "block_number": "3909",
-                "block_offset": "1",
-                "expires_at": null
-                }
-            ]
-        }
 
-## Specific Asset [GET /assets/{asset_id}]
+# Group Assets
+
+lorem ipsum
+
+## ASSET PARAMETERS 
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `fingerprint`  | string <br> **required** | Value representing the ... of the asset. Maximum length is 1,024 Unicode characters. |
+| `id` | string <br> **required** | Sha3_256 hash of the `fingerprint` |
+| `name` | string <br> **required** | The name of the asset. Maximum length is 64 Unicode characters. |
+| `metadata` | string <br> *optional* | A key-value dictionary represented by a maximum m1,024 Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]`with the Unicode character `0x0000` as the separator token.|
+| `registrant` | string <br> **required** | Public key of the account registering the asset. ??? |
+| `signature` | binary <br> **required** | binary value (address without checksum) ??? |
+
+
+## Creating an Asset Record
+
+Asset Records are created by a 3-step process:
+
+1. The binary format of an Asset Record is packed for signing by concatenating the Asset Record attribute values in the following order:
+    
+    1. `varint(0x02)` — binary value prefix that identifies the record as an Asset Record
+    2. `name` — string value
+    3. `fingerprint` — string value
+    4. `metadata` — string value
+    5. `registrant` — binary value (address without checksum)
+2. The registering account must sign the packed record with the account's private key to create a valid `signature`. 
+3. A payload is generated by appending the `signature` from Step 2 to the end of the packed Asset Record from Step 1.
+
+The asset database record is returned as the result of API request which has more details about the assets. (***what to do with this?)
+
+- is there a method for submitting ... or?
+
+## Querying the Blockchain for a Specific Asset [GET /assets/{asset_id}]
 
 + Parameters
 
@@ -388,7 +266,7 @@ Get all the bitmarks that changed in a specific range of time that match the giv
             }
         }
 
-## Asset Collection [GET /assets{?registrant,asset_ids,pending}]
+## Querying the Blockchain for an Asset Collection [GET /assets{?registrant,asset_ids,pending}]
 
 Get all the assets that match the given conditions.
 Note: Currently only the first 100 latest assets are returned
@@ -492,9 +370,40 @@ Note: Currently only the first 100 latest assets are returned
         }
 
 
-# Group Issue and Transfer
 
-## Issue [/issue]
+#Group Bitmarks
+
+lorem ipsum
+
+## Issuing [/issue]
+
+### PARAMETERS 
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `asset`  | string <br> **required** | The `id`value of the corresponding Asset Record. |
+| `nonce` | uint64 <br> **required** | Distinguishes between different issuances for the same `asset` value. |
+| `owner` | string <br> **required** | Public key representing of the account holder issuing the bitmark. |
+| `txid` | string <br> **required** | sha3_256 hash of the packed record |
+| `signature` | binary <br> **required** | binary value (address without checksum) ??? |
+
+
+### Creating a Single Issuance Record
+
+Issuance Records are created by a 3-step process:
+
+1. The binary format of an Issuance Record is packed for signing by concatenating the Issuance Record attribute values in the following order:
+    
+    1. `varint(0x03)` — binary value prefix that identifies the record as an Issuance Record
+    2. `asset` - binary value
+    3. `owner` — binary value (address without checksum)
+    4. `varint(nonce)` — buffer
+2. The issuing account holder must sign the packed record with the account's private key to create a valid `signature`. 
+3. A payload is generated by appending the `signature` from Step 2 to the end of the packed Issuance Record from Step 1.
+
+The issue records is returned by the API call `/bitmarks`. Its data is completely as a normal transfer to the issuer, please look at transfer record for more details.
+
+- there a method for submitting ... or?
 
 ### Create a new bitmark [POST]
 
@@ -557,7 +466,10 @@ It will return you a list of transaction id if the request has submmitted to the
                 "message": "unable to connect to a bitmarkd node"
             }
 
-## Transfer [/transfer]
+### 
+
+
+## Transferring [/transfer]
 
 ### Transfer a bitmark [POST]
 
@@ -606,3 +518,182 @@ It will return you a transaction id if the request has submmitted to the blockch
             {
                 "message": "unable to connect to a bitmarkd node"
             }
+
+
+## Querying the Blockchain for a Specific Bitmark [/bitmarks/{bitmark_txid}{?asset,provenance}]
+
+### Querying the Blockchain for a Specific Bitmark [GET]
+
+#### PARAMETERS
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `bitmark_txid`  | string <br> **required** | TXID of the bitmark in the form of hex string. |
+| `provenance`  | boolean <br> *optional* | Includes the bitmark's provenance. Default: `false`. |
+| `asset`  | boolean <br> *optional* | Includes the bitmark's corresponding asset record. Default: `false`. |
+
+
+
++ Parameters
+
+    + bitmark_txid: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03 (string, required) - TXID of the bitmark in the form of hex string
+    + provenance: true (boolean, optional) - Ask the server to also return the bitmark provenance
+        + Default: false
+    + asset: true (boolean, optional) - Option parameter to return the corresponding asset record.
+        + Default: false
+
++ Request
+
+        + bitmark_txid: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03
+        + provenance: true
+        + asset: true
+
++ Response 200 (application/json)
+
+        {
+            "bitmark": {
+                "txid": "ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03",
+                "owner": "eA3SzibojnTF34YAua8MyYDoRmVhAUzFxuQiPuVvYrt9XMKak1",
+                "signature": "dcaabcb436581c4042c8b7fd784255693979a22749c069ce3851d4c76a63efd145788feec4d6fd439a4165beb69a137f97e949e7eff1c2295fce48939bedf80d",
+                "asset_id": "2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e",
+                "issue_txid": "ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03",
+                "issuer": "eA3SzibojnTF34YAua8MyYDoRmVhAUzFxuQiPuVvYrt9XMKak1",
+                "issued_at": "2017-06-12 09:54:59+00",
+                "previous_txid": null,
+                "head": "head",
+                "status": "confirmed",
+                "pay_id": "",
+                "block_number": "3690",
+                "block_offset": "1",
+                "expires_at": null,
+                "created_at": "2017-06-12 09:54:59+00",
+                "modified_at": "2017-06-12 10:10:34.06562+00",
+                "provenance": [
+                    {
+                        "txid": "ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03",
+                        "owner": "eA3SzibojnTF34YAua8MyYDoRmVhAUzFxuQiPuVvYrt9XMKak1",
+                        "status": "confirmed",
+                        "created_at": "2017-06-12 09:54:59+00"
+                    }
+                ]
+            },
+            "asset": {
+                "id": "2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e",
+                "name": "all rise",
+                "fingerprint": "013a13f34c7bd7ddd970c26d8ee6eea8685362554189219f2dc2833e6f5e1347e9d35365ad8bc71023d9d67acbee8060e9da40bac094193353b6546367b85193cc",
+                "metadata": {
+                "Creator": "ai biet"
+                },
+                "registrant": "e3iQ86Hdj8owb8xg31QqUqanptPoQLzt2UvXQ5CB2Jf5wyRKLk",
+                "signature": "2488af1e00a6a00aedbf5f54b17e1ed3a3689729aa3db02d9f3709b05512f7623986ff660a94d3b30845e55787da3e722885a87141e0319e0675c6499093b200",
+                "status": "confirmed",
+                "block_number": "3304",
+                "block_offset": "1",
+                "expires_at": null
+            }
+        }
+ 
+## Querying the Blockchain for a Collection of Bitmarks [/bitmarks{?asset_id,issuer,owner,asset,pending,offset,direction,limit}]
+
+### Querying the Blockchain for a Collection of Bitmarks [GET]
+
+Get all the bitmarks that changed in a specific range of time that match the given conditions.
+
+#### PARAMETERS
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `asset_id`  | string <br> *optional* | Filters bitmarks for those issued for a specific asset. |
+| `issuer`  | string <br> *optional* | Filters bitmarks for those issued by a specific accountholder's public key. |
+| `owner`  | boolean <br> *optional* | Filters bitmarks for those currently owned by a specific accountholder's public key. |
+| `asset`  | boolean <br> *optional* | Includes bitmarks' corresponding asset records. Default value: `false`. |
+| `pending`  | boolean <br> *optional* | Includes bitmarks with pending statuses. Default value: `false`. |
+| `direction`  | enum[string] <br> *optional* | Specify which direction to return the bitmarks. Possible values: `up`, `down`.  Default value: `down`. |
+| `offset`  | string <br> *optional* | Offset from which the bitmarks are returned. The offset value is built by `{{bitmark.modified_at}}_{{bitmark.txid}}`. |
+| `limit`  | number <br> *optional* | Optional parameter to limit the number of bitmarks returned for the specified parameters. Maximum value: `100`. |
+
+
++ Parameters
+    + asset_id: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e (string, optional) - Filter bitmarks by asset id
+    + issuer: eA3SzibojnTF34YAua8MyYDoRmVhAUzFxuQiPuVvYrt9XMKak1 (string, optional) - Filter bitmarks by issuer
+    + owner: eA3SzibojnTF34YAua8MyYDoRmVhAUzFxuQiPuVvYrt9XMKak1 (string, optional) - Filter bitmarks by owner
+    + asset: true (string, optional) - Whether the api should return asset record
+        + Default: false
+    + pending: true (boolean, optional) - Whether the api should take pending bitmark into account
+        + Default: false
+    + direction: up (enum[string], optional)
+        + Default: down
+        + Members
+            + up
+            + down
+    + offset: `2017-06-27%2015%3A56%3A24.228717%2B07_b099bc995789fbae8245111f159b50293138fc6b6764b68d0850f411a97530d7` (string, optional) - The offset from which the bitmarks are returned. The offset value is built by {{bitmark.modified_at}}_{{bitmark.txid}}
+        E.g: To get a list of bitmarks that an account is owning, you first make the requestion with omitting offset. After getting a list of bitmarks, take the last bitmark and build the offset by {{bitmark.modified_at}}_{{bitmark.txid}} (e.g "2017-06-27 18:34:28.277054+07" + "_" + "c07018a9fa8e5df3c710c1d5d6ea64bae1aadb423ece811e8cc3722804c687eb", and then call the API again with this offset, you can get the next batch of bitmarks. (Note: Make sure you encode the parameter for URL)
+    + limit: 100 {number, optional) - limit the items returned, maximum is 100
+
++ Request
+
+        + owner: fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY,
+        + asset: true
+        + direction: up
+        + offset: 2017-06-27%2015%3A56%3A24.228717%2B07_b099bc995789fbae8245111f159b50293138fc6b6764b68d0850f411a97530d7
+
+
++ Response 200 (application/json)
+
+        {
+            "bitmarks": [
+                {
+                "txid": "3b0b3e0780d0aa79d8692d82c73ad03220b7dfcbe2522e0046e86cacd075c7b6",
+                "owner": "fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY",
+                "signature": "4c1972f5545e6a6428905c7cecbeb91b43785e84dc7c22b9bb4be659a7f13efcdb9c8c2e6bc84a63dd0e3d3ecf85f215f74d5d32357a470336afae8281b27a01",
+                "asset_id": "5fb5801d85dfa1499109b1914913ae1613614d7b193780317a2842295bbac594fcf5dc7e10670395aacb9d8bdd6251e22a4a3f83d8d8ac4d82783ab4a62e2b94",
+                "issue_txid": "3b0b3e0780d0aa79d8692d82c73ad03220b7dfcbe2522e0046e86cacd075c7b6",
+                "issuer": "fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY",
+                "issued_at": "2017-06-27 18:32:59+07",
+                "previous_txid": null,
+                "head": "head",
+                "status": "confirmed",
+                "pay_id": "",
+                "block_number": "3909",
+                "block_offset": "2",
+                "expires_at": null,
+                "created_at": "2017-06-27 18:32:59+07",
+                "modified_at": "2017-06-27 18:34:28.277054+07"
+                },
+                {
+                "txid": "c07018a9fa8e5df3c710c1d5d6ea64bae1aadb423ece811e8cc3722804c687eb",
+                "owner": "fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY",
+                "signature": "4478e84158be525add93516800618a96dc242b9246c07ad5e45a6074060e8bec3fbd3f8eaffdd94dd513efdd350e6e475b0aad3dbdf77ef8c1b5e2c736eb970b",
+                "asset_id": "5fb5801d85dfa1499109b1914913ae1613614d7b193780317a2842295bbac594fcf5dc7e10670395aacb9d8bdd6251e22a4a3f83d8d8ac4d82783ab4a62e2b94",
+                "issue_txid": "c07018a9fa8e5df3c710c1d5d6ea64bae1aadb423ece811e8cc3722804c687eb",
+                "issuer": "fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY",
+                "issued_at": "2017-06-27 18:32:59+07",
+                "previous_txid": null,
+                "head": "head",
+                "status": "confirmed",
+                "pay_id": "",
+                "block_number": "3909",
+                "block_offset": "3",
+                "expires_at": null,
+                "created_at": "2017-06-27 18:32:59+07",
+                "modified_at": "2017-06-27 18:34:28.277054+07"
+                }
+            ],
+            "assets": [
+                {
+                "id": "5fb5801d85dfa1499109b1914913ae1613614d7b193780317a2842295bbac594fcf5dc7e10670395aacb9d8bdd6251e22a4a3f83d8d8ac4d82783ab4a62e2b94",
+                "name": "vien test 3.2 MB",
+                "fingerprint": "012bf7f9e3a85e8fbcb90df0caa895b696ce4ebf476840c32791a10276a2a09853e8e14172ab56f790665315f28b595bdbecd6e40c5c65fbe34eb333601919b17b",
+                "metadata": {
+                    "Contributor": "Vien Luong",
+                    "Description": "Bitmark testing"
+                },
+                "registrant": "fbfPqtPTaYGf9NiCAhNY8yBeUw1tDQaGMGebYA4bABeT6ywuoY",
+                "signature": "3b6ec72f88d121e7ba6dc7e132c7ec6edffe21db8593e2db4ba99baeb029407aef6c140a82c45854e1b486a50eb8e798bbbe5061c921569144be8d99e7bc2303",
+                "status": "confirmed",
+                "block_number": "3909",
+                "block_offset": "1",
+                "expires_at": null
+                }
+            ]
+        }
