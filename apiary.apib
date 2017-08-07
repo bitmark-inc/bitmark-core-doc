@@ -16,62 +16,58 @@ https://api.test.bitmark.com/v1/
 ```
 The Bitmark Core API is served over HTTPS to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
 
+## Accountstes
 
---- 
+Represents a bitmark account and is needed to sign the transactions (asset, issuance, and transfer).
 
-# Accounts
+### Private Key
 
-## The Account object
+Currently, Bitmark is using Ed25519 to create the key pair. Bitmark private key is the combination of 32-random-byte seed (or secret key) and 32 bytes public key.
 
-lorem ipsum — a record type
+**KIF (Key Imported Format)**
 
-### ATTRIBUTES
+KIF is the standard format to export and import a single key into the application.
 
+The KIF is constructed as follows:
 
+- **Key variant value (keyVariant)**
+    - `1` bit determines the key part (private key = 0x00)
+    - `1` bit determines the network value (livenet = 0, testnet = 1)
+    - `2` zero bit buffer
+    - `3` bit determines the key type (key algorithm)
+- **Seed** — (32 bytes)
+- **Checksum** — `sha3_256(varint(keyVariant) + seed).slice(0, 4)`
 
----
+In summary:
 
+```
+kif = varint(keyVariantValue) + seed + checksum
+```
 
+### Address (Account Number)
 
----
+An address is constructed from the public key and is used when registering assets, issuing bitmarks, and especially transferring bitmarks. 
 
-# Bitmarks
+An address is constructed as follows:
 
+- **Key variant value (keyVariant)**
+    - `1` bit determines the key part (public key = 0x01)
+    - `1` bit determines the network value (livenet = 0, testnet = 1)
+    - `2` zero bit buffer
+    - `3` bit determines the key type (key algorithm)
+- **Public key**
+- **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
 
----
+In summary:
 
-## Issuance
-
-**Attributes**
-- `txid` — sha3_256 hash of the packed record
-- `asset` - asset id
-- `owner` - bitmark address
-- `nonce` — uint64 number to distinguish between different issuances
-
-**Packing the record**
-The binary format of an issuance record is built by concatenating the following value respectively:
-
-- `varint(0x03)`— binary value (the prefix `0x03` identifies the record as an issuance record)
-- `asset` — binary value
-- `owner` — binary value (address without checksum)
-- `varint(nonce)` — buffer
-
-**Signature**
-The owner needs to sign the packed record to create a valid signature.
-
-**Payload**
-The payload is made by appending the signature after the packed record
-
-**Database record**
-The issue records is returned by the API call `/bitmarks`. Its data is completely as a normal transfer to the issuer, please look at transfer record for more details.
-
+```
+address = varint(keyVariant) + publicKey + checksum
+```
 
 
+## Conventions
 
-
-# Conventions
-
-## Varint encoding
+### Varint encoding
 
 Varint encoding is a method to encode big numbers according to these rules:
 
@@ -104,104 +100,6 @@ varint(data) + buffer(data)
 ```
 
 
-# Bitmark Key Pair
-
-Represents a bitmark account and is needed to sign the transactions (asset, issuance, and transfer).
-
-## Private Key
-
-Currently, Bitmark is using Ed25519 to create the key pair. Bitmark private key is the combination of 32-random-byte seed (or secret key) and 32 bytes public key.
-
-**KIF (Key Imported Format)**
-
-KIF is the standard format to export and import a single key into the application.
-
-The KIF is constructed as follows:
-
-- **Key variant value (keyVariant)**
-    - `1` bit determines the key part (private key = 0x00)
-    - `1` bit determines the network value (livenet = 0, testnet = 1)
-    - `2` zero bit buffer
-    - `3` bit determines the key type (key algorithm)
-- **Seed** — (32 bytes)
-- **Checksum** — `sha3_256(varint(keyVariant) + seed).slice(0, 4)`
-
-In summary:
-
-```
-kif = varint(keyVariantValue) + seed + checksum
-```
-
-## Address (Account Number)
-
-An address is constructed from the public key and is used when registering assets, issuing bitmarks, and especially transferring bitmarks. 
-
-An address is constructed as follows:
-
-- **Key variant value (keyVariant)**
-    - `1` bit determines the key part (public key = 0x01)
-    - `1` bit determines the network value (livenet = 0, testnet = 1)
-    - `2` zero bit buffer
-    - `3` bit determines the key type (key algorithm)
-- **Public key**
-- **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
-
-In summary:
-
-```
-address = varint(keyVariant) + publicKey + checksum
-```
-
-# Records
-
-There are 3 types of records in bitmark system:
-- Asset
-- Issue
-- Transfer
-
-
-
-
-
-
-## Transfer
-
-**Attributes**
-- `txid` — sha3_256 hash of the packed record
-- `link` — `txid` of the previous record
-- `owner`
-- `payment` (optional)
-    - currency code (bitcoin is `0x01`)
-    - payment address (string)
-    - amount
-
-**Packing the record**
-The binary format of a transfer record is built by concatenating the following value respectively:
-
-- `varint(0x04)` — binary value (the prefix `0x04` identifies the record as an issuance record)
-- `link` — binary value
-- `payment`
-    - If there is a payment: varint value of `0x01`; if not: varint value of `0x00`
-    - `varint(currency_code)`
-    - `payment address` — string value
-    - `varint(amount)`
-- `owner` — binary value (address without checksum)
-
-**Signature**
-The owner needs to sign the packed record to create a valid signature.
-
-**Payload**
-The payload is made by concatenating the signature after the packed record
-
-**Database record**
-The transfer records is returned by the API call `/bitmarks`. It has more attributes to expose more information about the transfer as bellow:
-
-(TBA)
-
-# Group Accounts
-
-
-
 
 # Group Assets
 
@@ -219,9 +117,9 @@ lorem ipsum
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 
 
-## Creating an Asset Record
+## Creating an asset
 
-Asset Records are created by a 3-step process:
+Assets are created by a 3-step process:
 
 1. The binary format of an Asset Record is packed for signing by concatenating the Asset Record attribute values in the following order:
     
@@ -237,7 +135,7 @@ The asset database record is returned as the result of API request which has mor
 
 - is there a method for submitting ... or?
 
-## Querying the Blockchain for a Specific Asset [GET /assets/{asset_id}]
+## Querying the for a specific asset [GET /assets/{asset_id}]
 
 + Parameters
 
@@ -266,7 +164,7 @@ The asset database record is returned as the result of API request which has mor
             }
         }
 
-## Querying the Blockchain for an Asset Collection [GET /assets{?registrant,asset_ids,pending}]
+## Querying for an asset collection [GET /assets{?registrant,asset_ids,pending}]
 
 Get all the assets that match the given conditions.
 Note: Currently only the first 100 latest assets are returned
@@ -375,9 +273,13 @@ Note: Currently only the first 100 latest assets are returned
 
 lorem ipsum
 
-## Issuing [/issue]
+## Issuing a new bitmark [/issue]
 
-### PARAMETERS 
+### Issuing a new bitmark [POST]
+
+It will return you a list of transaction id if the request has submmitted to the blockchain.
+
+#### PARAMETERS 
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
@@ -388,9 +290,9 @@ lorem ipsum
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 
 
-### Creating a Single Issuance Record
+#### Creating a single bitmark issuance
 
-Issuance Records are created by a 3-step process:
+Issuing new bitmarks is a 3-step process:
 
 1. The binary format of an Issuance Record is packed for signing by concatenating the Issuance Record attribute values in the following order:
     
@@ -403,11 +305,16 @@ Issuance Records are created by a 3-step process:
 
 The issue records is returned by the API call `/bitmarks`. Its data is completely as a normal transfer to the issuer, please look at transfer record for more details.
 
-- there a method for submitting ... or?
+**Signature**
+The owner needs to sign the packed record to create a valid signature.
 
-### Create a new bitmark [POST]
+**Payload**
+The payload is made by appending the signature after the packed record
 
-It will return you a list of transaction id if the request has submmitted to the blockchain.
+**Database record**
+The issue records is returned by the API call `/bitmarks`. Its data is completely as a normal transfer to the issuer, please look at transfer record for more details.
+
+
 
 + Request (application/json)
 
@@ -466,14 +373,76 @@ It will return you a list of transaction id if the request has submmitted to the
                 "message": "unable to connect to a bitmarkd node"
             }
 
-### 
 
 
-## Transferring [/transfer]
 
-### Transfer a bitmark [POST]
+
+## Transfering a bitmark [/transfer]
+
+### Transfering a bitmark [POST]
 
 It will return you a transaction id if the request has submmitted to the blockchain.
+
+
+#### PARAMETERS 
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `link` | string <br> **required** | `txid` of the previous record in the bitmark. |
+| `owner` | string <br> **required** | Public key for the accountholder receiving the bitmark transfer. |
+| `signature` | binary <br> **required** | binary value (address without checksum) ??? |
+| `payment` | string <br> *optional* | text ...  |
+
+
+**Attributes**
+- `txid` — sha3_256 hash of the packed record
+- `link` — `txid` of the previous record
+- `owner`
+- `payment` (optional)
+    - currency code (bitcoin is `0x01`)
+    - payment address (string)
+    - amount
+    
+    
+#### Creating a transfer request
+
+Transfering bitmarks is a 3-step process:
+
+1. The binary format of an Issuance Record is packed for signing by concatenating the Issuance Record attribute values in the following order:
+    
+    1. `varint(0x03)` — binary value prefix that identifies the record as an Issuance Record
+    2. `asset` - binary value
+    3. `owner` — binary value (address without checksum)
+    4. `varint(nonce)` — buffer
+2. The issuing account holder must sign the packed record with the account's private key to create a valid `signature`. 
+3. A payload is generated by appending the `signature` from Step 2 to the end of the packed Issuance Record from Step 1.
+
+The issue records is returned by the API call `/bitmarks`. Its data is completely as a normal transfer to the issuer, please look at transfer record for more details.
+
+- there a method for submitting ... or?
+
+**Packing the record**
+The binary format of a transfer record is built by concatenating the following value respectively:
+
+- `varint(0x04)` — binary value (the prefix `0x04` identifies the record as an issuance record)
+- `link` — binary value
+- `payment`
+    - If there is a payment: varint value of `0x01`; if not: varint value of `0x00`
+    - `varint(currency_code)`
+    - `payment address` — string value
+    - `varint(amount)`
+- `owner` — binary value (address without checksum)
+
+**Signature**
+The owner needs to sign the packed record to create a valid signature.
+
+**Payload**
+The payload is made by concatenating the signature after the packed record
+
+**Database record**
+The transfer records is returned by the API call `/bitmarks`. It has more attributes to expose more information about the transfer as bellow:
+
+(TBA)
 
 + Request (application/json)
 
@@ -520,9 +489,11 @@ It will return you a transaction id if the request has submmitted to the blockch
             }
 
 
-## Querying the Blockchain for a Specific Bitmark [/bitmarks/{bitmark_txid}{?asset,provenance}]
+## Querying for a Specific Bitmark [/bitmarks/{bitmark_txid}{?asset,provenance}]
 
-### Querying the Blockchain for a Specific Bitmark [GET]
+### Querying for a Specific Bitmark [GET]
+
+Queries the Bitmark blockchain ... 
 
 #### PARAMETERS
 
@@ -593,9 +564,12 @@ It will return you a transaction id if the request has submmitted to the blockch
             }
         }
  
-## Querying the Blockchain for a Collection of Bitmarks [/bitmarks{?asset_id,issuer,owner,asset,pending,offset,direction,limit}]
+## Querying for a Collection of Bitmarks [/bitmarks{?asset_id,issuer,owner,asset,pending,offset,direction,limit}]
 
-### Querying the Blockchain for a Collection of Bitmarks [GET]
+### Querying for a Collection of Bitmarks [GET]
+
+Queries the Bitmark blockchain ... 
+
 
 Get all the bitmarks that changed in a specific range of time that match the given conditions.
 
