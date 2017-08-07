@@ -16,36 +16,6 @@ https://api.test.bitmark.com/v1/
 ```
 The Bitmark Core API is served over HTTPS to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
 
-## Accounts
-
-Represents a bitmark account and is needed to sign the transactions (asset, issuance, and transfer).
-
-### Private Key
-
-Currently, Bitmark is using Ed25519 to create the key pair. Bitmark private key is the combination of 32-random-byte seed (or secret key) and 32 bytes public key.
-
-
-
-### Address (Account Number)
-
-An address is constructed from the public key and is used when registering assets, issuing bitmarks, and especially transferring bitmarks. 
-
-An address is constructed as follows:
-
-- **Key variant value (keyVariant)**
-    - `1` bit determines the key part (public key = 0x01)
-    - `1` bit determines the network value (livenet = 0, testnet = 1)
-    - `2` zero bit buffer
-    - `3` bit determines the key type (key algorithm)
-- **Public key**
-- **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
-
-In summary:
-
-```
-address = varint(keyVariant) + publicKey + checksum
-```
-
 
 ## Conventions
 
@@ -88,7 +58,7 @@ varint(10100100) = 00000001 1010 0100
 varint(00000001 10101111 10110100 10111111 10100101 10111100 10101110 10101100) = 11010111 11101101 10010111 11111010 10101101 11110010 11011101 10101100
 ```
 
-## Appending data to a binary chunk
+### Appending data to a binary chunk
 
 **Appending a String Value**
 
@@ -100,15 +70,38 @@ varint(data) + buffer(data)
 
 ```
 varint(data) + buffer(data)
+
 ```
 
+## Group Accounts
 
+Represents a bitmark account and is needed to sign the transactions (asset, issuance, and transfer).
+
+
+Currently, Bitmark is using Ed25519 to create the key pair. Bitmark private key is the combination of 32-random-byte seed (or secret key) and 32 bytes public key.
+
+An address is constructed from the public key and is used when registering assets, issuing bitmarks, and especially transferring bitmarks. 
+
+An address is constructed as follows:
+
+- **Key variant value (keyVariant)**
+    - `1` bit determines the key part (public key = 0x01)
+    - `1` bit determines the network value (livenet = 0, testnet = 1)
+    - `2` zero bit buffer
+    - `3` bit determines the key type (key algorithm)
+- **Public key**
+- **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
+
+In summary:
+
+```
+address = varint(keyVariant) + publicKey + checksu
 
 # Group Assets
 
 lorem ipsum
 
-## ASSET PARAMETERS 
+## PARAMETERS 
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
