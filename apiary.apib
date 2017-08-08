@@ -95,7 +95,8 @@ An address is constructed as follows:
 In summary:
 
 ```
-address = varint(keyVariant) + publicKey + checksu
+address = varint(keyVariant) + publicKey + checksum
+```
 
 # Group Assets
 
@@ -267,11 +268,15 @@ Note: Currently only the first 100 latest assets are returned
 
 #Group Bitmarks
 
-lorem ipsum
+A **bitmark** is a uniue property title for a digital asset. A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain. This issuance serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or the original issuance record. 
+
+This section of the Bitmark Core API describes the addedobjects and methods for generating new bitmark issuances and bitmark ownership transfers. 
 
 ## Issuing a new bitmark [POST /issue]
 
 It will return you a list of transaction id if the request has submmitted to the blockchain.
+
+This issuance record contains
 
 #### PARAMETERS 
 
