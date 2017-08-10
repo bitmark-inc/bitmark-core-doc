@@ -1,4 +1,4 @@
-FORMAT: 1A
+sFORMAT: 1A
 HOST: https://api.test.bitmark.com/v1/
 
 # Introduction
@@ -7,17 +7,9 @@ Bitmark is the universal property system for the digital environment. Bitmark ma
 
 The Bitmark Core API is an open REST API that provides software developers a friendly interface to read from and write to the open-soure Bitmark blockchain. The Core API allows developers to query the blockchain for assets and bitmarks meeting specified criteria, as well as providing basic transaction functionality, such as bitmark issuances and bitmark transfers.
 
-## Versioning
-
-This API documentation represents the latest version of the Bitmark Core API which is: 
-
-```
-v1.0.0
-```
-
 ## Base URL 
 
-All URLs referenced in this documentation have t following base URL:
+All URLs referenced in this documentation have the following base URL:
 
 ```
 https://api.test.bitmark.com/v1/
@@ -276,9 +268,9 @@ Note: Currently only the first 100 latest assets are returned
 
 #Group Bitmarks
 
-A **bitmark** is a property title for a digital asset. A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain. This issuance serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or the original issuance record. Multiple bitmarks may be issued for the same digital asset; however, each bitmark is individually identified in the blockchain and will have a unique ownership history or **provenance**. 
+A **bitmark** is a uniue property title for a digital asset. A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain. This issuance serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or the original issuance record. 
 
-This section of the Bitmark Core API describes the objects and methods for generating new bitmark issuances and bitmark ownership transfers. 
+This section of the Bitmark Core API describes the addedobjects and methods for generating new bitmark issuances and bitmark ownership transfers. 
 
 ## Issuing a new bitmark [POST /issue]
 
