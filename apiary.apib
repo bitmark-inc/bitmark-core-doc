@@ -93,11 +93,11 @@ varint(data) + buffer(data)
 
 ## Group Accounts
 
-Within the Bitmark system, an **account** represents any entity capable of owning property, whether individuals, insitutions, or organizations. Within the Bitmark Core API, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). An account's public key serves as its pseudonymous identifier within the Bitmark blockchain. The account's private key is needed to digitally sign any Bitmark transaction, including asset registrations, bitmark issuances, and bitmark transfers. 
+Within the Bitmark system, an **account** is any entity capable of owning property, whether individuals, insitutions, or organizations. At the level of the Core API, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). An account's public key serves as a pseudonymous identifier within the Bitmark blockchain. The account's private key is needed to digitally sign any Bitmark transaction, including asset registrations, bitmark issuances, and bitmark transfers. 
 
 ### Creating an account
 
-The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to create account keypairs. 
+The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. 
 
 Represents a bitmark account and is needed to sign the transactions (asset, issuance, and transfer).
 
