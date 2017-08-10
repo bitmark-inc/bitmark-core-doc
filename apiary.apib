@@ -5,19 +5,17 @@ HOST: https://api.test.bitmark.com/v1/
 
 ## Overview
 
-Bitmark makes simple tools that empower anyone to assert ownership over their digital lives. Although digital assets and data increasingly constitute what we create and value most today, no system exists to record individual ownership claims to digital assets. By building a universal system for digital property rights, Bitmark envisions a world in which everyone owns a piece of the digital economy. 
-
-In the physical world, property is governed by a long-established formula: 
+Bitmark makes simple tools that empower anyone to assert ownership over their digital lives. Although digital assets increasingly constitute what we create and value most in our lives, no system exists to record individual ownership claims to digital assets. By building a universal system for digital property rights, Bitmark envisions a world in which everyone owns a piece of the digital economy. 
 
 > **property = asset + title**
 
-You do not legally own a home unless you hold the property title to that home. You cannot legally own a car unless you hold title to that car. 
+In the physical world, property has long been governed by the formula: *property = asset + title*. You do not legally own a home or other real estate asset unless you also hold the property title to that home. You do not legally own a car unless you also hold title to that car. 
 
 Bitmark is a universal property system for conferring the same property rights to digital assets that have long existed for physical assets. This system records ownership claims for digital assets as digital titles called *bitmarks*. Thus, in the digital world:
 
 > **digital property = digital asset + bitmark** 
 
-The Bitmark Core API is an open REST API that provides a simplified interface for creating, transfering, and verifying digital properties. The Core API allows developers to build on the core Bitmark infrastructure by reading from and writing to the open-source Bitmark blockchain.
+The Bitmark Core API is an open REST API that enables issuance, transfer, and authentication of digital properties. The Core API's simplified interface allows developers to easily build on the core Bitmark infrastructure by reading from and writing to the open-source Bitmark blockchain.
 
 ## Base URL 
 
@@ -26,10 +24,10 @@ All URLs referenced in this document have the following base URL:
 ```
 https://api.test.bitmark.com/v1/
 ```
-The Bitmark Core API is served over HTTPS to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
+The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.org/wiki/HTTPS) to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
 
 
-## Versioning 
+## Version
 
 This document refers to the current version of the Bitmark Core API, which is identified as: 
 
@@ -94,6 +92,12 @@ varint(data) + buffer(data)
 ```
 
 ## Group Accounts
+
+Within the Bitmark system, an **account** represents any entity capable of owning property, whether individuals, insitutions, or organizations. Within the Bitmark Core API, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). An account's public key serves as its pseudonymous identifier within the Bitmark blockchain. The account's private key is needed to digitally sign any Bitmark transaction, including asset registrations, bitmark issuances, and bitmark transfers. 
+
+### Creating an account
+
+The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to create account keypairs. 
 
 Represents a bitmark account and is needed to sign the transactions (asset, issuance, and transfer).
 
