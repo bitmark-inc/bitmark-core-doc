@@ -93,7 +93,7 @@ varint(data) + buffer(data)
 
 ## Group Accounts
 
-Within the Bitmark system, an **account** is any entity capable of owning property, whether individuals, insitutions, or organizations. At the level of the Core API, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). An account's public key serves as a pseudonymous identifier within the Bitmark blockchain. The account's private key is needed to digitally sign any Bitmark transaction, including asset registrations, bitmark issuances, and bitmark transfers. 
+Within the Bitmark system, an **account** is any entity capable of owning property, whether individuals, insitutions, or organizations. At the level of the Core API, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). An account's public key serves as a pseudonymous identifier within the Bitmark blockchain. The private key is required to digitally sign any Bitmark transactions on behalf of that account, including asset registrations, bitmark issuances, and bitmark transfers. 
 
 ### Creating an account
 
@@ -124,23 +124,25 @@ address = varint(keyVariant) + publicKey + checksum
 
 # Group Assets
 
-An **asset** is any digital object, including a files, applications, and data. 
+An **asset** is any digital object, including files, applications, and data. Assets are registered in the Bitmark system for the purpose of issuing bitmarks for them. Issuing a bitmark for an asset creates a digital property. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. When a bitmark is issued for an asset, the unique digital fingerprint for that asset is recorded in the bitmark's issuance record, so that the asset can always be authenticated against the bitmark. 
+
+This section of the Bitmark Core API describes the objects and methods for registering and querying for assets in the Bitmark system. 
 
 ## PARAMETERS 
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
-| `fingerprint`  | string <br> **required** | Value representing the ... of the asset. Maximum length is 1,024 Unicode characters. |
-| `id` | string <br> **required** | Sha3_256 hash of the `fingerprint` |
+| `fingerprint`  | string <br> **required** | Value representing the unique cryptographic hash of the asset. Maximum length is 1,024 Unicode characters. |
+| `id` | string <br> **required** | Sha3_256 hash of the `fingerprint`. |
 | `name` | string <br> **required** | The name of the asset. Maximum length is 64 Unicode characters. |
 | `metadata` | string <br> *optional* | A key-value dictionary represented by a maximum m1,024 Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]`with the Unicode character `0x0000` as the separator token.|
-| `registrant` | string <br> **required** | Public key of the account registering the asset. ??? |
+| `registrant` | string <br> **required** | Public key of the accountholder registering the asset. |
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 
 
-## Creating an asset
+## Registering an asset
 
-Assets are created by a 3-step process:
+Assets are registered according to a 3-step process:
 
 1. The binary format of an Asset Record is packed for signing by concatenating the Asset Record attribute values in the following order:
     
@@ -292,13 +294,13 @@ Note: Currently only the first 100 latest assets are returned
 
 #Group Bitmarks
 
-A **bitmark** is a uniue property title for a digital asset. A bitmark plus a digital asset equals a digital property. 
+A **bitmark** is a uniue property title for a digital asset. A bitmark plus an asset equals a digital property. 
 
-> **digital property = digital asset + bitmark
+> **digital property = asset + bitmark**
 
 A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain. This issuance serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or the original issuance record. 
 
-This section of the Bitmark Core API describes the Updaobjects and methods for generating new bitmark issuances and bitmark ownership transfers. 
+This section of the Bitmark Core API describes the objects and methods for generating new bitmark issuances and bitmark ownership transfers. 
 
 ## Issuing a new bitmark [POST /issue]
 
