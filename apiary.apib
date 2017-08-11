@@ -17,7 +17,13 @@ Bitmark is a universal property system for conferring the same property rights t
 
 The Bitmark Core API is an open REST API that enables issuance, transfer, and authentication of digital properties. The Core API's simplified interface allows developers to easily build on the core Bitmark infrastructure by reading from and writing to the open-source Bitmark blockchain.
 
-## Base URL 
+## Version & Base URL 
+
+This document refers to the current version of the Bitmark Core API, which is identified as: 
+
+```
+v1.0
+```
 
 All URLs referenced in this document have the following base URL:
 
@@ -27,30 +33,51 @@ https://api.test.bitmark.com/v1/
 The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.org/wiki/HTTPS) to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
 
 
-## Version
+## Accounts
 
-This document refers to the current version of the Bitmark Core API, which is identified as: 
+Within the Bitmark system, an **account** is any entity capable of owning property, whether individuals, insitutions, or organizations. At the level of the Core API, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. Each keypair is the combination of 32-random-byte seed (or secret key) and 32 bytes public key.
+
+### Public keys
+
+An account's public key serves as a pseudonymous identifier within the Bitmark blockchain for each of the following record types: 
+
+- as the `registrant` parameter of an asset record
+- as the `owner` parameter of a bitmark issuance record
+- as the `owner` parameter of a bitmark transfer record
+
+An address is constructed from the public key and is used when registering assets, issuing bitmarks, and especially transferring bitmarks. 
+
+An address is constructed as follows:
+
+- **Key variant value (keyVariant)**
+    - `1` bit determines the key part (public key = `0x01`)
+    - `1` bit determines the network value (livenet = `0`, testnet = `1`)
+    - `2` zero bit buffer
+    - up to `60` bits determines the key type algorithm
+- **Public key**
+- **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
+
+In summary:
 
 ```
-v1.0
+address = varint(keyVariant) + publicKey + checksum
 ```
 
-## Conventions
+### Private keys
 
+An account's private key is required to digitally sign any Bitmark transactions on behalf of that account, including asset registrations, bitmark issuances, and bitmark transfers. 
 
-### KIF (Key Import Format)
-
-KIF is the standard format to export and import a single key into the application.
+KIF (Key Import Format) is the standard format to export and import a single key into the application.
 
 The KIF is constructed as follows:
 
 - **Key variant value (keyVariant)**
-    - `1` bit determines the key part (private key = 0x00)
-    - `1` bit determines the network value (livenet = 0, testnet = 1)
+    - `1` bit determines the key part (private key = `0x00`)
+    - `1` bit determines the network value (livenet = `0`, testnet = `1`UP)
     - `2` zero bit buffer
-    - `3` bit determines the key type (key algorithm)
-- **Seed** — (32 bytes)
-- **Checksum** — `sha3_256(varint(keyVariant) + seed).slice(0, 4)`
+    - up to `60` bits determines the key type algorithm
+- **Private key**
+- **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
 
 In summary:
 
@@ -60,14 +87,14 @@ kif = varint(keyVariantValue) + seed + checksum
 
 ### Varint encoding
 
-Varint encoding is a method to encode big numbers according to these rules:
+Varint encoding is a method to encode 64-bit numbers according to these rules:
 
-- A number will be represented with up to 8 bytes.
-- Each byte only represents the value from `0x01` to `0x7F` (meaning that we do not use the most significant bit to store the value) except for the 8th byte
-- The most significant bit of the 1st to 7th bytes depends on whether we should concatenate the bits:
+- A number will be represented with up to 9 bytes.
+- Each byte only represents the value from `0x01` to `0x7F` (meaning that we do not use the most significant bit to store the value) except for the 9th byte
+- The most significant bit of the 1st to 8th bytes depends on whether we should concatenate the bits:
     - `1` means we should concatenate the bits
     - `0` means that the byte is the last one
-- For the 8th byte (last byte), the most significant bit is also added to the value
+- For the 9th byte (last byte), the most significant bit is also added to the value
 
 **Example**
 
@@ -91,36 +118,6 @@ varint(data) + buffer(data)
 
 ```
 
-## Group Accounts
-
-Within the Bitmark system, an **account** is any entity capable of owning property, whether individuals, insitutions, or organizations. At the level of the Core API, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). An account's public key serves as a pseudonymous identifier within the Bitmark blockchain. The private key is required to digitally sign any Bitmark transactions on behalf of that account, including asset registrations, bitmark issuances, and bitmark transfers. 
-
-### Creating an account
-
-The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. 
-
-Represents a bitmark account and is needed to sign the transactions (asset, issuance, and transfer).
-
-
-Currently, Bitmark is using Ed25519 to create the key pair. Bitmark private key is the combination of 32-random-byte seed (or secret key) and 32 bytes public key.
-
-An address is constructed from the public key and is used when registering assets, issuing bitmarks, and especially transferring bitmarks. 
-
-An address is constructed as follows:
-
-- **Key variant value (keyVariant)**
-    - `1` bit determines the key part (public key = 0x01)
-    - `1` bit determines the network value (livenet = 0, testnet = 1)
-    - `2` zero bit buffer
-    - `3` bit determines the key type (key algorithm)
-- **Public key**
-- **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
-
-In summary:
-
-```
-address = varint(keyVariant) + publicKey + checksum
-```
 
 # Group Assets
 
