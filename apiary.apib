@@ -184,7 +184,7 @@ The asset database record is returned as the result of API request which has mor
             }
         }
 
-## Query for a collection of assets [GET /assets{?registrant,asset_ids,pending}]
+## Query for a set of assets [GET /assets{?registrant,asset_ids,pending}]
 
 Get all the assets that match the given conditions.
 Note: Currently only the first 100 latest assets are returned
@@ -201,7 +201,7 @@ Note: Currently only the first 100 latest assets are returned
         + pending: true
 
 + Response 200 (application/json)
-
+ 
         {
             "asset": {
                 "id": "2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e",
@@ -584,7 +584,7 @@ Queries the Bitmark blockchain ...
             }
         }
  
-## Query for a collection of bitmarks [GET /bitmarks{?asset_id,issuer,owner,ownwer_sent,asset,pending,offset,direction,limit}]
+## Query for a set of bitmarks [GET /bitmarks{?asset_id,issuer,owner,ownwer_sent,asset,pending,offset,direction,limit}]
 
 Queries the Bitmark blockchain ... 
 
