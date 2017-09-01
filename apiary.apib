@@ -132,10 +132,10 @@ This section of the Bitmark Core API describes the objects and methods for regis
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
 | `fingerprint`  | string <br> **required** | Value representing the unique cryptographic hash of the asset. Maximum length is 1,024 Unicode characters. |
-| `id` | string <br> **required** | SHA3-512 hash (64 bytes) of the `fingerprint` value. serves as a unique identi- fier for the Asset Record and will be identical across all Issue Records for the same Asset Record. The Asset Record Fingerprint is hashed as a means for guaranteeing a consistent size regardless of the original size of the Fingerprint value. |
+| `id` | string <br> **required** | SHA3-512 hash (64 bytes) of the `fingerprint` value, which guarantees a consistent `id` value size regardless of the original size of the `fingerprint` value. The `id` serves as a unique identifier for the asset and will be identical across all bitmark issuances for the same asset. |
 | `name` | string <br> **required** | The name of the asset. Maximum length is 64 Unicode characters. |
 | `metadata` | string <br> *optional* | A key-value dictionary represented by a maximum m1,024 Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]`with the Unicode character `0x0000` as the separator token.|
-| `registrant` | string <br> **required** | Public key of the accountholder registering the asset. |
+| `registrant` | string <br> **required** | Public key (Ed25519) of the accountholder registering the asset. |
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 
 Assets are registered according to a 3-step process:
