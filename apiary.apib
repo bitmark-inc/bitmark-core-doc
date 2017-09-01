@@ -196,7 +196,7 @@ The asset database record is returned as the result of API request which has mor
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
 | `registrant`  | string <br> *optional* | Filter assets by accountholder registering the asset. |
-| `registrant`  | string[] <br> *optional* | Return assets matching an array of asset `id`s |
+| `asset_ids`  | string[] <br> *optional* | Return assets matching an array of asset `id`s |
 | `pending`  | boolean <br> *optional* | Include assets with asset records pending confirmation in the blockchain. Default: `false`. |
 
 Get all the assets that match the given conditions.
@@ -308,7 +308,7 @@ A **bitmark** is a uniue property title for a digital asset. A bitmark plus an a
 
 > **digital property = asset + bitmark**
 
-A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain. This issuance serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or the original issuance record. 
+At a technical level, a bitmark is defined as a digitally signed chain consisting of a single issuance record and one or more transfer records. A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain. This issuance serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or the original issuance record. 
 
 This section of the Bitmark Core API describes the objects and methods for generating new bitmark issuances and bitmark ownership transfers. 
 
