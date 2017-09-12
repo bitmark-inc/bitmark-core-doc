@@ -19,7 +19,7 @@ While most people probably consider property to be the stuff that they own, **pr
 
 ![property rights](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/property.png?raw=true)
 
-A primary function of a property title is to make property rights portable by acting as a "container" that allows property rights to be transferred from one owner to another. For assets that require a property title, transfers of title must be publicly recorded via a centralized government entity, such as a county land registrar or a state department of motor vehicles, in order for the transfer of property rights to be legally recognized. This history of title transfer, or **provenance**, is most often tracked via a formal **property system**, which records the complete ownership history of every registered property:
+A primary function of a property title is to make property rights portable by acting as a "container" that allows property rights to be transferred from one owner to another. For assets that require a property title, transfers of title must be publicly recorded via a centralized government entity, such as a county land registrar or a state department of motor vehicles, in order for the transfer of property rights to be legally recognized. This history of title transfer, or **provenance**, is most often tracked via a formal **property system**, which records the complete ownership history of every property registered in the system:
 
 ![property system](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/property_system.png?raw=true)
 
@@ -140,7 +140,7 @@ varint(data) + buffer(data)
 
 # Group Assets
 
-An **asset** is any digital object, including files, applications, and data. Assets are registered in the Bitmark system for the purpose of issuing bitmarks for them. Issuing a bitmark for an asset creates a digital property. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. When a bitmark is issued for an asset, the unique digital fingerprint for that asset is recorded in the bitmark's issuance record, so that the asset can always be authenticated against the bitmark. 
+An **asset** is any digital object, including files, applications, code, and data. Assets are registered in the Bitmark system for the purpose of issuing bitmarks for them. Issuing a bitmark for an asset creates a digital property. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. When a bitmark is issued for an asset, the unique digital fingerprint for that asset is recorded in the bitmark's issuance record, so that the asset can always be authenticated against the bitmark. 
 
 This section of the Bitmark Core API describes the objects and methods for registering and querying for assets in the Bitmark system. 
 
