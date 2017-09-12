@@ -54,55 +54,39 @@ The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.or
 
 ## Accounts
 
-Within the Bitmark system, an **account** represents any entity capable of creating and owning property, whether individuals, insitutions, or organizations. At the level of the Core API, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. Each keypair is the combination of 32-random-byte seed (or secret key) and 32 bytes public key.
+Within the Bitmark system, an **account** represents any entity capable of creating and owning property, whether individuals, insitutions, or organizations. At the level of the Bitmark blockchian and Core API, accounts do not exist as native standalone objects but instead are found as attribute values in each of the 3 types of blockchain records (asset records, bitmark issuance records, and bitmark transfer records) or as digital signatures appended to each of these record types. Within the Bitmark system, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. Each keypair is the combination of 32-random-byte seed (or private key) and a corresponding 32-byte public key.
 
 ### Public keys
 
-An account's public key serves as a pseudonymous identifier within the Bitmark blockchain for each of the following record types: 
+An account's public key serves as a pseudonymous identifier within the Bitmark blockchain and is often referred to as a **Bitmark account naumber**. The Bitmark account number designates ownership by serving as the account value in each of the following blockchain record fields: 
 
-- as the `registrant` parameter of an asset record
-- as the `owner` parameter of a bitmark issuance record
-- as the `owner` parameter of a bitmark transfer record
+- as the `registrant` parameter of an [asset record](#registering-an-asset)
+- as the `owner` parameter of a bitmark [issuance record](#issuing-a-bitmark)
+- as the `owner` parameter of a bitmark [transfer record](#transferring-a-bitmark)
 
-An address is constructed from the public key and is used when registering assets, issuing bitmarks, and especially transferring bitmarks. 
+A 32-byte Bitmark public key is constructed as follows:
 
-An address is constructed as follows:
-
-- **Key variant value (keyVariant)**
+1. **Key variant value (keyVariant)**
     - `1` bit determines the key part (public key = `0x01`)
     - `1` bit determines the network value (livenet = `0`, testnet = `1`)
     - `2` zero bit buffer
     - up to `60` bits determines the key type algorithm
-- **Public key**
-- **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
-
-In summary:
-
-```
-address = varint(keyVariant) + publicKey + checksum
-```
+2. **Public key**
+3. **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
 
 ### Private keys
 
-An account's private key is required to digitally sign any Bitmark transactions on behalf of that account, including asset registrations, bitmark issuances, and bitmark transfers. 
+An account's private key is required to digitally sign any Bitmark blockchain record on behalf of that account, including asset records, bitmark issuance records, and bitmark transfer records. 
 
-KIF (Key Import Format) is the standard format to export and import a single key into the application.
+A Bitmark private key is constructed as follows:
 
-The KIF is constructed as follows:
-
-- **Key variant value (keyVariant)**
+1. **Key variant value (keyVariant)**
     - `1` bit determines the key part (private key = `0x00`)
     - `1` bit determines the network value (livenet = `0`, testnet = `1`UP)
     - `2` zero bit buffer
     - up to `60` bits determines the key type algorithm
-- **Private key**
-- **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
-
-In summary:
-
-```
-kif = varint(keyVariantValue) + seed + checksum
-```
+2. **Private key**
+3. **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
 
 ### Varint encoding
 
@@ -151,10 +135,10 @@ This section of the Bitmark Core API describes the objects and methods for regis
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
 | `fingerprint`  | string <br> **required** | Value representing the unique cryptographic hash of the asset. Maximum length is 1,024 Unicode characters. |
-| `id` | string <br> **required** | SHA3-512 hash (64 bytes) of the `fingerprint` value, which guarantees a consistent `id` size regardless of the original size of the `fingerprint`. The `id` serves as a unique identifier for the asset and will be identical across all bitmark issuances for the same asset. |
+| `id` | string <br> **required** | [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the `fingerprint` value, which guarantees a consistent `id` size regardless of the original size of the `fingerprint`. The `id` serves as a unique identifier for the asset and will be identical across all bitmark issuances for the same asset. |
 | `name` | string <br> **required** | The name of the asset. Maximum length is 64 Unicode characters. |
 | `metadata` | string <br> *optional* | A key-value dictionary represented by a maximum 1,024 Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]`with the Unicode character `0x0000` as the separator token.|
-| `registrant` | string <br> **required** | Public key (Ed25519) of the accountholder registering the asset. |
+| `registrant` | string <br> **required** | Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the accountholder registering the asset. |
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 
 Assets are registered according to a 3-step process:
