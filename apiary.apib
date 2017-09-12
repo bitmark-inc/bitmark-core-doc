@@ -128,7 +128,7 @@ An **asset** is any digital object, including files, applications, code, and dat
 
 This section of the Bitmark Core API describes the objects and methods for registering and querying for assets in the Bitmark system. 
 
-## Asset Registration 
+## Asset Registration Policy
 
 As a means for avoiding data duplication and thereby minimizing blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` and `id` fields to determine whether the asset record already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain and a reference is returned to the new asset record. However, if an asset record with the same asset `id` already exists, the asset record is rejected from the blockchain and a reference is returned to the original asset record. 
 
