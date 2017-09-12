@@ -66,13 +66,13 @@ An account's public key serves as a pseudonymous identifier within the Bitmark b
 
 A 32-byte Bitmark public key is constructed as follows:
 
-1. **Key variant value (keyVariant)**
+1. Key varint value (keyVarint)
     - `1` bit determines the key part (public key = `0x01`)
     - `1` bit determines the network value (livenet = `0`, testnet = `1`)
     - `2` zero bit buffer
     - up to `60` bits determines the key type algorithm
-2. **Public key**
-3. **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
+2. Public key
+3. Checksum — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
 
 ### Private keys
 
@@ -80,13 +80,13 @@ An account's private key is required to digitally sign any Bitmark blockchain re
 
 A Bitmark private key is constructed as follows:
 
-1. **Key variant value (keyVariant)**
+1. Key varint value (keyVarint)
     - `1` bit determines the key part (private key = `0x00`)
     - `1` bit determines the network value (livenet = `0`, testnet = `1`UP)
     - `2` zero bit buffer
     - up to `60` bits determines the key type algorithm
-2. **Private key**
-3. **Checksum** — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
+2. Private key
+3. Checksu* — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
 
 ### Varint encoding
 
