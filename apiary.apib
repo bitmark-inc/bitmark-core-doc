@@ -54,15 +54,13 @@ The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.or
 
 # Group Bitmarks
 
-## Overview
-
 At a technical level, a bitmark is defined as a digitally signed chain consisting of a single issuance record and one or more transfer records. A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain, along with an **asset record** if the corresponding asset has not been previously registered in the Bitmark blockchain. This issuance record serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or to the original issuance record. Thus, a bitmark consists of a chain of issuance and transfer records that weaves in and out of different blocks of transactions to create its provenance. The authenticity of each property’s provenance is maintained by continuously verifying this chain of owner signatures:
 
 ![bitmark diagram](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark.png?raw=true)
 
 As an example, consider the figure above, in which Alice issues a bitmark for a specific digital asset. The Bitmark system first uses a cryptographic hashing function to generate a unique fingerprint for the digital asset which it stores in an asset record along with an issuance record for the bitmark which lists Alice as the owner. Once it has been verified by the Bitmark network, this issuance record is aggregated into latest block of the Bitmark blockchain (let’s say block 13). When Alice later wishes to transfer ownership of the property to Bob, Alice creates a transfer record that contains a link back to her previous issuance record, designates Bob as the new owner, and digitally signs the transfer record with her private key. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. The Bitmark system has been architected to support multiple digital signing methods, including digital signatures that guard against the possibility of future attacks from post-quantum computers.
 
-This section of the Bitmark Core API describes the objects and methods for generating new bitmark issuances and bitmark ownership transfers. 
+This section of the Bitmark Core API describes the objects and methods for generating bitmark issuances and transfers. 
 
 ## Issuing a bitmark [POST /issue]
 
