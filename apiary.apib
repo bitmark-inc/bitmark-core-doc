@@ -98,7 +98,7 @@ Content-Type: application/json
   ]
 }
 ```
-### ASSET PARAMETERS
+**ASSET PARAMETERS**
 
 The `assets` objects accepts an array of asset objects within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned empty array (`"assets": [],...`) in cases when an issuance request is made for an asset record that already exists in the blockchain.
 
@@ -110,7 +110,7 @@ The `assets` objects accepts an array of asset objects within a single issuance 
 | `registrant` | string <br> **required** | Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the accountholder registering the asset. |
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 
-### ISSUANCE PARAMETERS
+**ISSUANCE PARAMETERS**
 
 The `issues` object accepts an array of asset objects within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issue object. 
 
@@ -121,9 +121,11 @@ The `issues` object accepts an array of asset objects within a single issuance r
 | `owner` | string <br> **required** | Public key representing of the account holder issuing the bitmark. |
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 
-### RESPONSES
+**RESPONSES**
 
-The successful issuance API request returns an array of bitmark `id` objects corresponding to the requested `issues` array: 
+The successful issuance API request returns an array of bitmark `id` objects corresponding to the requested `issues` array. 
+
+Example issuance response: 
 
 ```
 [
