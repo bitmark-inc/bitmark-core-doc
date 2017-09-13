@@ -100,7 +100,7 @@ Content-Type: application/json
 ```
 **ASSET PARAMETERS**
 
-The `assets` objects accepts an array of asset objects within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned empty array (`"assets": [],...`) in cases when an issuance request is made for an asset record that already exists in the blockchain.
+The `assets` objects accepts an array of multiple asset objects within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned empty array (`"assets": [],...`) in cases when an issuance request is made for an asset record that already exists in the blockchain.
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
@@ -112,7 +112,7 @@ The `assets` objects accepts an array of asset objects within a single issuance 
 
 **ISSUANCE PARAMETERS**
 
-The `issues` object accepts an array of issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record. 
+The `issues` object accepts an array of multiple issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record. 
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
