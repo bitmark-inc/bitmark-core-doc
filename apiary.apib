@@ -52,77 +52,25 @@ https://api.test.bitmark.com/v1/
 The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.org/wiki/HTTPS) to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
 
 
-## Accounts
+#Group Bitmarks
 
-Within the Bitmark system, an **account** represents any entity capable of creating and owning property, whether individuals, insitutions, or organizations. At the level of the Bitmark blockchian and Core API, accounts do not exist as native standalone objects. Instead, accounts are found as attribute values in each of the three types of blockchain records (asset records, bitmark issuance records, and bitmark transfer records) or as digital signatures appended to each of these record types. Within the Bitmark system, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. Each keypair is the combination of 32-random-byte seed (or private key) and a corresponding 32-byte public key.
+A **bitmark** is a unique digital property title for a digital asset. A bitmark plus an asset equals a digital property. 
 
-### Public keys
+> **digital property = asset + bitmark**
 
-An account's public key serves as a pseudonymous identifier within the Bitmark blockchain and is often referred to as a **Bitmark account number**. The Bitmark account number designates ownership by serving as the account value in each of the following blockchain record fields: 
+At a technical level, a bitmark is defined as a digitally signed chain consisting of a single issuance record and one or more transfer records. A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain. This issuance serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or the original issuance record. Thus, a bitmark consists of a chain of issuance and transfer records that weaves in and out of different blocks of transactions to create its provenance. The authenticity of each property’s provenance is maintained by continuously verifying this chain of owner signatures.
 
-- as the `registrant` parameter of an asset record
-- as the `owner` parameter of a bitmark issuance record
-- as the `owner` parameter of a bitmark transfer record		
+![bitmark diagram](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark.png?raw=true)
 
-A 32-byte Bitmark public key is constructed as follows:
+As an example, consider the figure above, in which Alice issues a bitmark for a specific digital asset. The Bitmark system first uses a cryptographic hashing function to generate a unique fingerprint for the digital asset along with an issuance record for the bitmark which lists Alice as the owner. Once it has been verified by the Bitmark network, this issuance record is aggregated into latest block of the Bitmark blockchain (let’s say block 13). When Alice later wishes to transfer ownership of the property to Bob, Alice creates a transfer record that contains a link back to her previous issuance record, designates Bob as the new owner, and digitally signs the transfer record with her private key. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. The Bitmark system has been architected to support multiple digital signing methods, including digital signatures that guard against the possibility of future attacks from post-quantum computers.
 
-1. Key varint value (keyVarint)
-    - `1` bit determines the key part (public key = `0x01`)
-    - `1` bit determines the network value (livenet = `0`, testnet = `1`)
-    - `2` zero bit buffer
-    - up to `60` bits determines the key type algorithm
-2. Public key
-3. Checksum — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
+This section of the Bitmark Core API describes the objects and methods for generating new bitmark issuances and bitmark ownership transfers. 
 
-### Private keys
+## Issuing a bitmark [POST /issue]
 
-An account's private key is required to digitally sign any Bitmark blockchain record on behalf of that account, including asset records, bitmark issuance records, and bitmark transfer records. 
+It will return you a list of transaction id if the request has submmitted to the blockchain.
 
-A Bitmark private key is constructed as follows:
-
-1. Key varint value (keyVarint)
-    - `1` bit determines the key part (private key = `0x00`)
-    - `1` bit determines the network value (livenet = `0`, testnet = `1`UP)
-    - `2` zero bit buffer
-    - up to `60` bits determines the key type algorithm
-2. Private key
-3. Checksum — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
-
-### Varint encoding
-
-Varint encoding is a method to encode 64-bit numbers according to these rules:
-
-- A number will be represented with up to 9 bytes.
-- Each byte only represents the value from `0x01` to `0x7F` (meaning that we do not use the most significant bit to store the value) except for the 9th byte
-- The most significant bit of the 1st to 8th bytes depends on whether we should concatenate the bits:
-    - `1` means we should concatenate the bits
-    - `0` means that the byte is the last one
-- For the 9th byte (last byte), the most significant bit is also added to the value
-
-**Example**
-
-```
-varint(10100100) = 00000001 1010 0100
-varint(00000001 10101111 10110100 10111111 10100101 10111100 10101110 10101100) = 11010111 11101101 10010111 11111010 10101101 11110010 11011101 10101100
-```
-
-### Appending data to a binary chunk
-
-**Appending a String Value**
-
-```
-varint(data) + buffer(data)
-```
-
-**Appending a Binary Value**
-
-```
-varint(data) + buffer(data)
-
-```
-
-
-# Group Assets
+This issuance record contains
 
 An **asset** is any digital object, including files, applications, code, and data. Assets are registered in the Bitmark system for the purpose of issuing bitmarks for them. Issuing a bitmark for an asset creates a digital property with a permananent reference to the underlying asset. This permananent link between bitmark issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
 
@@ -152,185 +100,17 @@ Assets are registered according to a 3-step process:
 1. The binary format of an Asset Record is packed for signing by concatenating the Asset Record attribute values in the following order:
     
     1. `varint(0x02)` — binary value prefix that identifies the record as an Asset Record
-    2. `name` — string value
-    3. `id` ** no longer called `AssetIndex` ???
-    3. `fingerprint` — string value
-    4. `metadata` — string value
-    5. `registrant` — binary value (address without checksum)
+    2. `name`
+    3. `id`
+    3. `fingerprint`
+    4. `metadata`
+    5. `registrant`
 2. The registering account must sign the packed record with the account's private key to create a valid `signature`. 
 3. A payload is generated by appending the `signature` from Step 2 to the end of the packed Asset Record from Step 1.
 
 The asset database record is returned as the result of API request which has more details about the assets. (***what to do with this?***)
 
 - is there a method for submitting ... or?
-
-## Querying for a specific asset [GET /assets/{asset_id}]
-
-#### PARAMETERS 
-
-| PARAMETER  | TYPE  | DESCRIPTION  |
-|---:|---|---|
-| `id`  | string <br> **required** | Sha3_256 hash of the asset `fingerprint`. |
-
-+ Parameters
-
-    + asset_id: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e (string, required) - ID of the asset
-
-+ Request
-
-        + asset_id: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e
-
-+ Response 200 (application/json)
-
-        {
-            "asset": {
-                "id": "2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e",
-                "name": "all rise",
-                "fingerprint": "013a13f34c7bd7ddd970c26d8ee6eea8685362554189219f2dc2833e6f5e1347e9d35365ad8bc71023d9d67acbee8060e9da40bac094193353b6546367b85193cc",
-                "metadata": {
-                "Creator": "ai biet"
-                },
-                "registrant": "e3iQ86Hdj8owb8xg31QqUqanptPoQLzt2UvXQ5CB2Jf5wyRKLk",
-                "signature": "2488af1e00a6a00aedbf5f54b17e1ed3a3689729aa3db02d9f3709b05512f7623986ff660a94d3b30845e55787da3e722885a87141e0319e0675c6499093b200",
-                "status": "confirmed",
-                "block_number": "3304",
-                "block_offset": "1",
-                "expires_at": null
-            }
-        }
-
-## Querying for a set of assets [GET /assets{?registrant,asset_ids,pending}]
-
-#### PARAMETERS 
-
-| PARAMETER  | TYPE  | DESCRIPTION  |
-|---:|---|---|
-| `registrant`  | string <br> *optional* | Filter assets by accountholder registering the asset. |
-| `asset_ids`  | string[] <br> *optional* | Return assets matching an array of asset `id`s |
-| `pending`  | boolean <br> *optional* | Include assets with asset records pending confirmation in the blockchain. Default: `false`. |
-
-Get all the assets that match the given conditions.
-Note: Currently only the first 100 latest assets are returned
-
-+ Parameters
-
-    + registrant: e3iQ86Hdj8owb8xg31QqUqanptPoQLzt2UvXQ5CB2Jf5wyRKLk (string, optional) - Filter bitmarks by asset fingerprint
-    + asset_ids: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e (string[], optional) - Return assets with these ids
-    + pending: true (boolean, optional) - Whether the api should take pending asset into account
-
-+ Request
-
-        + asset_ids: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e
-        + pending: true
-
-+ Response 200 (application/json)
- 
-        {
-            "asset": {
-                "id": "2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e",
-                "name": "all rise",
-                "fingerprint": "013a13f34c7bd7ddd970c26d8ee6eea8685362554189219f2dc2833e6f5e1347e9d35365ad8bc71023d9d67acbee8060e9da40bac094193353b6546367b85193cc",
-                "metadata": {
-                "Creator": "ai biet"
-                },
-                "registrant": "e3iQ86Hdj8owb8xg31QqUqanptPoQLzt2UvXQ5CB2Jf5wyRKLk",
-                "signature": "2488af1e00a6a00aedbf5f54b17e1ed3a3689729aa3db02d9f3709b05512f7623986ff660a94d3b30845e55787da3e722885a87141e0319e0675c6499093b200",
-                "status": "confirmed",
-                "block_number": "3304",
-                "block_offset": "1",
-                "expires_at": null
-            }
-        }
-
-+ Request
-
-        + registrant: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e
-        + pending: true
-
-+ Response 200 (application/json)
-
-        {
-            "assets": [
-                {
-                "id": "a2a880c316c994b73451f3fd0fa3144b54fbae897a012fecd5310e83ebcfeb9d1da96a566aa543665632ddeb75d4b6d540bc9a57162bb6b6495c26d087cdee4a",
-                "name": "kim test 024",
-                "fingerprint": "0194f2334ced6817c552569c78d0b1ff737bcf8fba8dccbb7563056157340036c1bfeff9bf9648184b5223a197ac901a5deeab6fee1abdfbac73599c339446f3396f9b96da3c17483d1e2888893593d9e9080509e4",
-                "metadata": {
-                    "description": "kim test 024"
-                },
-                "registrant": "e4uZbWLdxgGYs8DFrnQQxGuwP7pFMasqpkLXL7uFheJwhEBjoi",
-                "signature": "1427f2aced89ca393203a5c7aac7a726a0d78c5de05fb37e132a82d7d34c577cbcd2fe2606b1cedad7629da3b46afd9f074789f42b437d588eae55f4d404510b",
-                "status": "confirmed",
-                "block_number": "2",
-                "block_offset": "1",
-                "expires_at": null
-                },
-                {
-                "id": "148165ee98365b6a47c6605bba009214b0e78e67443166b4ac42c56adc7f5373b5c18955fdbbd9d92bc4eaae9f477cb68d754140374d23716764394621195ba9",
-                "name": "Vien test dev2 - kid cdd8",
-                "fingerprint": "0188beb81dab41b2be09b515e224a01e416afee6473fc69f2386e7878def4653bfb8afb80a77a71be3fcdb852b7e2aeaf977337ca93f75eee0a7218c5e4e3ac27f5f0778d76eb2100206c97497c29c53e4320a818a",
-                "metadata": {
-                    "description": "\/Users\/bitmark\/Downloads\/images\/21abebbbd93342f0acd43d0f0083cdd8.jpg"
-                },
-                "registrant": "fpspn8PRuTF5TPYzaf3oDM7w1ZDohiFgqeySabzqiUAMpHBNUy",
-                "signature": "2ba7cb5ad96852c7dc80894c462d46b1e56f266bbb877a50d00cc9134cfec6720d39c79df75f1b2ac27bfe5585fa6c894b3e949791a207dd4d29ae0b0dc3c307",
-                "status": "confirmed",
-                "block_number": "3",
-                "block_offset": "1",
-                "expires_at": null
-                },
-                {
-                "id": "57518290d09cb6966c5646fa41a7cbd1f6e5f2720c6908ef4410b1e0a2a4aa70533a76445af752dda5d461a7a76bfe8a05df48ad8caf54b2dc26776b1f29d63a",
-                "name": "Vien test dev2 - kid dbe copy",
-                "fingerprint": "01ed17195de9e9c009847c215c348dca9d4e2a33edca7612d61814092d051d9bd0c62da0e6681692fe3d4739eaa3837befd26ed62aebb5c43a92a59162d3d2bd53bd4462687ff96a65668834bc9207cbbb4c4f5171",
-                "metadata": {
-                    "description": "\/Users\/bitmark\/Downloads\/images\/8751ee9893c77f31076d63bc177dbe25 copy.jpg"
-                },
-                "registrant": "fpspn8PRuTF5TPYzaf3oDM7w1ZDohiFgqeySabzqiUAMpHBNUy",
-                "signature": "49a7b47f25d4fe2ec92913b5f22e7acfe454feb386fbe0fdb660ec623ab7c970fe37bd14b5ceb8d82054372af19e344ce0188bea385f1ce4d98a7e77bf79b20f",
-                "status": "confirmed",
-                "block_number": "4",
-                "block_offset": "1",
-                "expires_at": null
-                },
-                {
-                "id": "3c6e2b0f20fcc7333d1bba3116d76328390cd271243dc2392f640cbba020bcbcb07eae4f7af15909872b416de23fb4d5928d1a7704879cfd0c902928a7458465",
-                "name": "kim test 027",
-                "fingerprint": "01cf76d120ffbcfe74c50eb429870b623f2fa537e0631c65b9e51471c9302e174baf0793a74431463cc94e77929eb9fd96d0470d7c362a9512aebb981030da3b141a859d7e939f381f9b2b980783b212833d478965",
-                "metadata": {
-                    "description": "kim test 027"
-                },
-                "registrant": "e4uZbWLdxgGYs8DFrnQQxGuwP7pFMasqpkLXL7uFheJwhEBjoi",
-                "signature": "6e7658eb069b51776f3e5624322b74d787453c924953ebd9fa132f951347f1d866d49cd0569706196171c03223931086a36f7f49d5bff4783f1f2fb9fd114607",
-                "status": "confirmed",
-                "block_number": "5",
-                "block_offset": "1",
-                "expires_at": null
-                }
-            ]
-        }
-
-
-
-#Group Bitmarks
-
-A **bitmark** is a unique digital property title for a digital asset. A bitmark plus an asset equals a digital property. 
-
-> **digital property = asset + bitmark**
-
-At a technical level, a bitmark is defined as a digitally signed chain consisting of a single issuance record and one or more transfer records. A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain. This issuance serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or the original issuance record. Thus, a bitmark consists of a chain of issuance and transfer records that weaves in and out of different blocks of transactions to create its provenance. The authenticity of each property’s provenance is maintained by continuously verifying this chain of owner signatures.
-
-![bitmark diagram](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark.png?raw=true)
-
-As an example, consider the figure above, in which Alice issues a bitmark for a specific digital asset. The Bitmark system first uses a cryptographic hashing function to generate a unique fingerprint for the digital asset along with an issuance record for the bitmark which lists Alice as the owner. Once it has been verified by the Bitmark network, this issuance record is aggregated into latest block of the Bitmark blockchain (let’s say block 13). When Alice later wishes to transfer ownership of the property to Bob, Alice creates a transfer record that contains a link back to her previous issuance record, designates Bob as the new owner, and digitally signs the transfer record with her private key. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. The Bitmark system has been architected to support multiple digital signing methods, including digital signatures that guard against the possibility of future attacks from post-quantum computers.
-
-This section of the Bitmark Core API describes the objects and methods for generating new bitmark issuances and bitmark ownership transfers. 
-
-## Issuing a bitmark [POST /issue]
-
-It will return you a list of transaction id if the request has submmitted to the blockchain.
-
-This issuance record contains
 
 #### PARAMETERS 
 
@@ -690,3 +470,232 @@ Get all the bitmarks that changed in a specific range of time that match the giv
                 }
             ]
         }
+
+# Group Assets
+
+An **asset** is any digital object, including files, applications, code, and data. Assets are registered in the Bitmark system for the purpose of issuing bitmarks for them. Issuing a bitmark for an asset creates a digital property with a permananent reference to the underlying asset. This permananent link between bitmark issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
+
+This section of the Bitmark Core API describes the methods for querying for assets in the Bitmark system. 
+
+## Asset Registration Policy
+
+As a means for avoiding data duplication and thereby minimize blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` and `id` fields to determine whether the asset record already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain and a reference is returned to the new asset record. However, if an asset record with the same asset `id` already exists in the blockchain, the new asset record is rejected from incorporation in the blockchain and a reference is returned to the existing asset record. 
+
+One implication of this policy is that once an asset record has been added to the blockchain all subsequent bitmarks issued from that asset record must use the `name` and `metadata` fields for that asset record. In other words, the first asset record to register its unique fingerprint in the blockchain will forever take priority over any subsequent asset records with the same fingerprint value. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmarks will always reference the original asset record in the blockchain. 
+
+
+## Querying for a specific asset [GET /assets/{asset_id}]
+
+#### PARAMETERS 
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `id`  | string <br> **required** | Sha3_256 hash of the asset `fingerprint`. |
+
++ Parameters
+
+    + asset_id: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e (string, required) - ID of the asset
+
++ Request
+
+        + asset_id: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e
+
++ Response 200 (application/json)
+
+        {
+            "asset": {
+                "id": "2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e",
+                "name": "all rise",
+                "fingerprint": "013a13f34c7bd7ddd970c26d8ee6eea8685362554189219f2dc2833e6f5e1347e9d35365ad8bc71023d9d67acbee8060e9da40bac094193353b6546367b85193cc",
+                "metadata": {
+                "Creator": "ai biet"
+                },
+                "registrant": "e3iQ86Hdj8owb8xg31QqUqanptPoQLzt2UvXQ5CB2Jf5wyRKLk",
+                "signature": "2488af1e00a6a00aedbf5f54b17e1ed3a3689729aa3db02d9f3709b05512f7623986ff660a94d3b30845e55787da3e722885a87141e0319e0675c6499093b200",
+                "status": "confirmed",
+                "block_number": "3304",
+                "block_offset": "1",
+                "expires_at": null
+            }
+        }
+
+## Querying for a set of assets [GET /assets{?registrant,asset_ids,pending}]
+
+#### PARAMETERS 
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `registrant`  | string <br> *optional* | Filter assets by accountholder registering the asset. |
+| `asset_ids`  | string[] <br> *optional* | Return assets matching an array of asset `id`s |
+| `pending`  | boolean <br> *optional* | Include assets with asset records pending confirmation in the blockchain. Default: `false`. |
+
+Get all the assets that match the given conditions.
+Note: Currently only the first 100 latest assets are returned
+
++ Parameters
+
+    + registrant: e3iQ86Hdj8owb8xg31QqUqanptPoQLzt2UvXQ5CB2Jf5wyRKLk (string, optional) - Filter bitmarks by asset fingerprint
+    + asset_ids: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e (string[], optional) - Return assets with these ids
+    + pending: true (boolean, optional) - Whether the api should take pending asset into account
+
++ Request
+
+        + asset_ids: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e
+        + pending: true
+
++ Response 200 (application/json)
+ 
+        {
+            "asset": {
+                "id": "2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e",
+                "name": "all rise",
+                "fingerprint": "013a13f34c7bd7ddd970c26d8ee6eea8685362554189219f2dc2833e6f5e1347e9d35365ad8bc71023d9d67acbee8060e9da40bac094193353b6546367b85193cc",
+                "metadata": {
+                "Creator": "ai biet"
+                },
+                "registrant": "e3iQ86Hdj8owb8xg31QqUqanptPoQLzt2UvXQ5CB2Jf5wyRKLk",
+                "signature": "2488af1e00a6a00aedbf5f54b17e1ed3a3689729aa3db02d9f3709b05512f7623986ff660a94d3b30845e55787da3e722885a87141e0319e0675c6499093b200",
+                "status": "confirmed",
+                "block_number": "3304",
+                "block_offset": "1",
+                "expires_at": null
+            }
+        }
+
++ Request
+
+        + registrant: 2f667c16f2d17bfa28fe32d6eb8a4d306702fc41f5086d0ce8b214235f00ab2858f048ef19efeccd5046e3ce8b19c6300ca9bad3f493416dbcf2d65de470086e
+        + pending: true
+
++ Response 200 (application/json)
+
+        {
+            "assets": [
+                {
+                "id": "a2a880c316c994b73451f3fd0fa3144b54fbae897a012fecd5310e83ebcfeb9d1da96a566aa543665632ddeb75d4b6d540bc9a57162bb6b6495c26d087cdee4a",
+                "name": "kim test 024",
+                "fingerprint": "0194f2334ced6817c552569c78d0b1ff737bcf8fba8dccbb7563056157340036c1bfeff9bf9648184b5223a197ac901a5deeab6fee1abdfbac73599c339446f3396f9b96da3c17483d1e2888893593d9e9080509e4",
+                "metadata": {
+                    "description": "kim test 024"
+                },
+                "registrant": "e4uZbWLdxgGYs8DFrnQQxGuwP7pFMasqpkLXL7uFheJwhEBjoi",
+                "signature": "1427f2aced89ca393203a5c7aac7a726a0d78c5de05fb37e132a82d7d34c577cbcd2fe2606b1cedad7629da3b46afd9f074789f42b437d588eae55f4d404510b",
+                "status": "confirmed",
+                "block_number": "2",
+                "block_offset": "1",
+                "expires_at": null
+                },
+                {
+                "id": "148165ee98365b6a47c6605bba009214b0e78e67443166b4ac42c56adc7f5373b5c18955fdbbd9d92bc4eaae9f477cb68d754140374d23716764394621195ba9",
+                "name": "Vien test dev2 - kid cdd8",
+                "fingerprint": "0188beb81dab41b2be09b515e224a01e416afee6473fc69f2386e7878def4653bfb8afb80a77a71be3fcdb852b7e2aeaf977337ca93f75eee0a7218c5e4e3ac27f5f0778d76eb2100206c97497c29c53e4320a818a",
+                "metadata": {
+                    "description": "\/Users\/bitmark\/Downloads\/images\/21abebbbd93342f0acd43d0f0083cdd8.jpg"
+                },
+                "registrant": "fpspn8PRuTF5TPYzaf3oDM7w1ZDohiFgqeySabzqiUAMpHBNUy",
+                "signature": "2ba7cb5ad96852c7dc80894c462d46b1e56f266bbb877a50d00cc9134cfec6720d39c79df75f1b2ac27bfe5585fa6c894b3e949791a207dd4d29ae0b0dc3c307",
+                "status": "confirmed",
+                "block_number": "3",
+                "block_offset": "1",
+                "expires_at": null
+                },
+                {
+                "id": "57518290d09cb6966c5646fa41a7cbd1f6e5f2720c6908ef4410b1e0a2a4aa70533a76445af752dda5d461a7a76bfe8a05df48ad8caf54b2dc26776b1f29d63a",
+                "name": "Vien test dev2 - kid dbe copy",
+                "fingerprint": "01ed17195de9e9c009847c215c348dca9d4e2a33edca7612d61814092d051d9bd0c62da0e6681692fe3d4739eaa3837befd26ed62aebb5c43a92a59162d3d2bd53bd4462687ff96a65668834bc9207cbbb4c4f5171",
+                "metadata": {
+                    "description": "\/Users\/bitmark\/Downloads\/images\/8751ee9893c77f31076d63bc177dbe25 copy.jpg"
+                },
+                "registrant": "fpspn8PRuTF5TPYzaf3oDM7w1ZDohiFgqeySabzqiUAMpHBNUy",
+                "signature": "49a7b47f25d4fe2ec92913b5f22e7acfe454feb386fbe0fdb660ec623ab7c970fe37bd14b5ceb8d82054372af19e344ce0188bea385f1ce4d98a7e77bf79b20f",
+                "status": "confirmed",
+                "block_number": "4",
+                "block_offset": "1",
+                "expires_at": null
+                },
+                {
+                "id": "3c6e2b0f20fcc7333d1bba3116d76328390cd271243dc2392f640cbba020bcbcb07eae4f7af15909872b416de23fb4d5928d1a7704879cfd0c902928a7458465",
+                "name": "kim test 027",
+                "fingerprint": "01cf76d120ffbcfe74c50eb429870b623f2fa537e0631c65b9e51471c9302e174baf0793a74431463cc94e77929eb9fd96d0470d7c362a9512aebb981030da3b141a859d7e939f381f9b2b980783b212833d478965",
+                "metadata": {
+                    "description": "kim test 027"
+                },
+                "registrant": "e4uZbWLdxgGYs8DFrnQQxGuwP7pFMasqpkLXL7uFheJwhEBjoi",
+                "signature": "6e7658eb069b51776f3e5624322b74d787453c924953ebd9fa132f951347f1d866d49cd0569706196171c03223931086a36f7f49d5bff4783f1f2fb9fd114607",
+                "status": "confirmed",
+                "block_number": "5",
+                "block_offset": "1",
+                "expires_at": null
+                }
+            ]
+        }
+
+# Group Accounts
+
+Within the Bitmark system, an **account** represents any entity capable of creating and owning property, whether individuals, insitutions, or organizations. At the level of the Bitmark blockchian and Core API, accounts do not exist as native standalone objects. Instead, accounts are found as attribute values in each of the three types of blockchain records (asset records, bitmark issuance records, and bitmark transfer records) or as digital signatures appended to each of these record types. Within the Bitmark system, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. Each keypair is the combination of 32-random-byte seed (or private key) and a corresponding 32-byte public key.
+
+## Public keys
+
+An account's public key serves as a pseudonymous identifier within the Bitmark blockchain and is often referred to as a **Bitmark account number**. The Bitmark account number designates ownership by serving as the account value in each of the following blockchain record fields: 
+
+- as the `registrant` parameter of an asset record
+- as the `owner` parameter of a bitmark issuance record
+- as the `owner` parameter of a bitmark transfer record		
+
+A 32-byte Bitmark public key is constructed as follows:
+
+1. Key varint value (keyVarint)
+    - `1` bit determines the key part (public key = `0x01`)
+    - `1` bit determines the network value (livenet = `0`, testnet = `1`)
+    - `2` zero bit buffer
+    - up to `60` bits determines the key type algorithm
+2. Public key
+3. Checksum — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
+
+## Private keys
+
+An account's private key is required to digitally sign any Bitmark blockchain record on behalf of that account, including asset records, bitmark issuance records, and bitmark transfer records. 
+
+A Bitmark private key is constructed as follows:
+
+1. Key varint value (keyVarint)
+    - `1` bit determines the key part (private key = `0x00`)
+    - `1` bit determines the network value (livenet = `0`, testnet = `1`UP)
+    - `2` zero bit buffer
+    - up to `60` bits determines the key type algorithm
+2. Private key
+3. Checksum — `sha3_256(varint(keyVariant) + pubkey).slice(0, 4)`
+
+## Varint encoding
+
+Varint encoding is a method to encode 64-bit numbers according to these rules:
+
+- A number will be represented with up to 9 bytes.
+- Each byte only represents the value from `0x01` to `0x7F` (meaning that we do not use the most significant bit to store the value) except for the 9th byte
+- The most significant bit of the 1st to 8th bytes depends on whether we should concatenate the bits:
+    - `1` means we should concatenate the bits
+    - `0` means that the byte is the last one
+- For the 9th byte (last byte), the most significant bit is also added to the value
+
+**Example**
+
+```
+varint(10100100) = 00000001 1010 0100
+varint(00000001 10101111 10110100 10111111 10100101 10111100 10101110 10101100) = 11010111 11101101 10010111 11111010 10101101 11110010 11011101 10101100
+```
+
+## Appending data to a binary chunk
+
+**Appending a String Value**
+
+```
+varint(data) + buffer(data)
+```
+
+**Appending a Binary Value**
+
+```
+varint(data) + buffer(data)
+
+```
+
