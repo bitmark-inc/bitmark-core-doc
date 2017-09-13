@@ -58,27 +58,46 @@ At a technical level, a bitmark is defined as a digitally signed chain consistin
 
 ![bitmark diagram](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark.png?raw=true)
 
-As an example, consider the figure above, in which Alice issues a bitmark for a specific digital asset by submitting a digitally signed issuance record and a digitally signed asset record to the Core API. This initial issuance record lists Alice herself as the initial bitmark owner. Once the asset and issuance records have been verified by the Bitmark network, they are aggregated into the latest block of the Bitmark blockchain (let’s say block 13). When Alice later wishes to transfer ownership of the property to Bob, Alice creates and signs a transfer record that contains a link back to her previous issuance record and designates Bob as the new owner. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. The Bitmark system has been architected to support multiple digital signing methods, including digital signatures that guard against the possibility of future attacks from post-quantum computers.
+As an example, consider the figure above, in which Alice issues a bitmark for a specific digital asset by submitting a digitally signed issuance record and a digitally signed asset record to the Core API. This initial issuance record lists Alice herself as the initial bitmark owner. Once the asset and issuance records have been verified by the Bitmark network, they are aggregated into the latest block of the Bitmark blockchain (let’s say block 13). When Alice later wishes to transfer ownership of the property to Bob, Alice creates and signs a transfer record that contains a link back to her previous issuance record and designates Bob as the new owner. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. 
 
 This section of the Bitmark Core API describes the objects and methods for generating bitmark issuances and transfers. 
 
 ## Issuing a bitmark [POST /issue]
 
-It will return you a list of transaction id if the request has submmitted to the blockchain.
+This API supports issuing bitmarks, which is the process by which new bitmarks are added to the Bitmark blockchain. Issuance is also the process by which new asset records are registered in the Bitmark blockchain. An **asset** is any digital object, including files, applications, code, and data. Issuing a bitmark for an asset creates a digital property with a permananent reference to the underlying asset. This permananent link between bitmark issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
 
-This issuance record contains
-
-An **asset** is any digital object, including files, applications, code, and data. Assets are registered in the Bitmark system for the purpose of issuing bitmarks for them. Issuing a bitmark for an asset creates a digital property with a permananent reference to the underlying asset. This permananent link between bitmark issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
-
-This section of the Bitmark Core API describes the objects and methods for registering and querying for assets in the Bitmark system. 
-
-## Asset Registration Policy
-
-As a means for avoiding data duplication and thereby minimize blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` and `id` fields to determine whether the asset record already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain and a reference is returned to the new asset record. However, if an asset record with the same asset `id` already exists in the blockchain, the new asset record is rejected from incorporation in the blockchain and a reference is returned to the existing asset record. 
+As a means for avoiding data duplication and thereby minimize blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` field to determine whether an asset record with that `fingerprint` value already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain along with its accompanying issuance record (assuming the issuance record is also verified by the network). However, if an asset record with the same asset `id` already exists in the blockchain, the new asset record is rejected from incorporation in the blockchain and a reference is returned to the existing asset record. 
 
 One implication of this policy is that once an asset record has been added to the blockchain all subsequent bitmarks issued from that asset record must use the `name` and `metadata` fields for that asset record. In other words, the first asset record to register its unique fingerprint in the blockchain will forever take priority over any subsequent asset records with the same fingerprint value. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmarks will always reference the original asset record in the blockchain. 
 
-## Registering an asset
+```
+POST https://api.test.bitmark.com/v1/issue
+``` 
+
+Example request: 
+
+```
+Content-Type: application/json
+{
+  "assets": [
+    {
+      "fingerprint": "test_fingerprint",
+      "name": "testcase",
+      "metadata": "",
+      "registrant": "e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU",
+      "signature": "68cbccfd732e494b827aadfa7546de73d4f0c3e69ce1d5ff81d100e2fdc05696969f193a024c9f77ae79900252304c84f0ebdffee2f01b117713a58afb006d06"
+    }
+  ],
+  "issues": [
+    {
+      "asset": "e3edef121b7dd0e30f389716cae89a1589335d7d8aa9fe3802f8b19f19505077ff13a21f4c3374c1f188dd9fe13fcab39f2690e1fdae54473a850e8dc519e882",
+      "nonce": 1499245158002,
+      "owner": "e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU",
+      "signature": "d7cfb3f008000bffae32b98df6bacf8b5a068d4d29ebc114666fbf354be1c81725bcfb1124613e4dcfdc9674019b0723c4aebe32d4f3ed246dde19176c111308"
+    }
+  ]
+}
+```
 
 ### ASSET PARAMETERS 
 
@@ -108,7 +127,7 @@ The asset database record is returned as the result of API request which has mor
 
 - is there a method for submitting ... or?
 
-#### PARAMETERS 
+#### ISSUANCE PARAMETERS 
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
