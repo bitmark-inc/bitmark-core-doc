@@ -56,11 +56,7 @@ The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.or
 
 ## Overview
 
-A **bitmark** is a unique digital property title for a digital asset. A bitmark plus an asset equals a digital property. 
-
-> **digital property = asset + bitmark**
-
-At a technical level, a bitmark is defined as a digitally signed chain consisting of a single issuance record and one or more transfer records. A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain. This issuance serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or the original issuance record. Thus, a bitmark consists of a chain of issuance and transfer records that weaves in and out of different blocks of transactions to create its provenance. The authenticity of each property’s provenance is maintained by continuously verifying this chain of owner signatures.
+At a technical level, a bitmark is defined as a digitally signed chain consisting of a single issuance record and one or more transfer records. A bitmark is created by submitting an **issuance record** to be verified and recorded in the Bitmark blockchain, along with an **asset record** if the corresponding asset has not been previously registered. This issuance serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or the original issuance record. Thus, a bitmark consists of a chain of issuance and transfer records that weaves in and out of different blocks of transactions to create its provenance. The authenticity of each property’s provenance is maintained by continuously verifying this chain of owner signatures.
 
 ![bitmark diagram](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark.png?raw=true)
 
@@ -86,7 +82,7 @@ One implication of this policy is that once an asset record has been added to th
 
 ## Registering an asset
 
-### PARAMETERS 
+### ASSET PARAMETERS 
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
@@ -161,8 +157,8 @@ The issue records is returned by the API call `/bitmarks`. Its data is completel
         {
             "assets": [
                 {
-                    "name": "testcase",
                     "fingerprint": "test_fingerprint",
+                    "name": "testcase",
                     "metadata": "",
                     "registrant": "e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU",
                     "signature": "68cbccfd732e494b827aadfa7546de73d4f0c3e69ce1d5ff81d100e2fdc05696969f193a024c9f77ae79900252304c84f0ebdffee2f01b117713a58afb006d06"
@@ -171,8 +167,8 @@ The issue records is returned by the API call `/bitmarks`. Its data is completel
             "issues": [
                 {
                     "asset": "e3edef121b7dd0e30f389716cae89a1589335d7d8aa9fe3802f8b19f19505077ff13a21f4c3374c1f188dd9fe13fcab39f2690e1fdae54473a850e8dc519e882",
-                    "owner": "e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU",
                     "nonce": 1499245158002,
+                    "owner": "e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU",
                     "signature": "d7cfb3f008000bffae32b98df6bacf8b5a068d4d29ebc114666fbf354be1c81725bcfb1124613e4dcfdc9674019b0723c4aebe32d4f3ed246dde19176c111308"
                 }
             ]
