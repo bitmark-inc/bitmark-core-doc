@@ -54,7 +54,7 @@ The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.or
 
 ## Accounts
 
-Within the Bitmark system, an **account** represents any entity capable of creating and owning property, whether individuals, insitutions, or organizations. At the level of the Bitmark blockchian and Core API, accounts do not exist as native standalone objects but instead are found as attribute values in each of the 3 types of blockchain records (asset records, bitmark issuance records, and bitmark transfer records) or as digital signatures appended to each of these record types. Within the Bitmark system, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. Each keypair is the combination of 32-random-byte seed (or private key) and a corresponding 32-byte public key.
+Within the Bitmark system, an **account** represents any entity capable of creating and owning property, whether individuals, insitutions, or organizations. At the level of the Bitmark blockchian and Core API, accounts do not exist as native standalone objects. Instead, accounts are found as attribute values in each of the three types of blockchain records (asset records, bitmark issuance records, and bitmark transfer records) or as digital signatures appended to each of these record types. Within the Bitmark system, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. Each keypair is the combination of 32-random-byte seed (or private key) and a corresponding 32-byte public key.
 
 ### Public keys
 
@@ -62,7 +62,7 @@ An account's public key serves as a pseudonymous identifier within the Bitmark b
 
 - as the `registrant` parameter of an asset record
 - as the `owner` parameter of a bitmark issuance record
-- as the `owner` parameter of a bitmark transfer record
+- as the `owner` parameter of a bitmark transfer record		
 
 A 32-byte Bitmark public key is constructed as follows:
 
@@ -130,9 +130,9 @@ This section of the Bitmark Core API describes the objects and methods for regis
 
 ## Asset Registration Policy
 
-As a means for avoiding data duplication and thereby minimizing blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` and `id` fields to determine whether the asset record already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain and a reference is returned to the new asset record. However, if an asset record with the same asset `id` already exists, the asset record is rejected from the blockchain and a reference is returned to the original asset record. 
+As a means for avoiding data duplication and thereby minimize blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` and `id` fields to determine whether the asset record already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain and a reference is returned to the new asset record. However, if an asset record with the same asset `id` already exists in the blockchain, the new asset record is rejected from incorporation in the blockchain and a reference is returned to the existing asset record. 
 
-One implication of this policy is that only the original assset record for an asset is allowed to determine the `name` and `metadata` fields for that asset record as well as all bitmarks issued for that asset. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmark issuers cannot alter the bimtark name and metadata fields for their bitmarks since these fields are permanent attributes of the original underlying asset record. 
+One implication of this policy is that once an asset record has been added to the blockchain all subsequent bitmarks issued from that asset record must use the `name` and `metadata` fields for that asset record. In other words, the first asset record to register its unique fingerprint in the blockchain will forever take priority over any subsequent asset records with the same fingerprint value. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmarks will always reference the original asset record in the blockchain. 
 
 ## Registering an asset
 
