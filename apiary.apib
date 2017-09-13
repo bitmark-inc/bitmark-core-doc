@@ -62,21 +62,17 @@ As an example, consider the figure above, in which Alice issues a bitmark for a 
 
 This section of the Bitmark Core API describes the objects and methods for generating bitmark issuances and transfers. 
 
-## Issuing a bitmark
+## Issuing bitmarks
 
-This API supports issuing bitmarks, which is the process by which new bitmarks are added to the Bitmark blockchain. Issuance is also the process by which new asset records are registered in the Bitmark blockchain. An **asset** is any digital object, including files, applications, code, and data. Issuing a bitmark for an asset creates a digital property with a permananent reference to the underlying asset. This permananent link between bitmark issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
+This API supports issuing bitmarks, which is the process by which new bitmarks are added to the Bitmark blockchain. Issuance is also the process by which new asset records are registered in the Bitmark blockchain. An **asset** is any digital object, including files, applications, code, and data. Issuing a bitmark for an asset creates a digital property with a permananent reference to the corresponding asset record. This permananent link between bitmark issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
 
-As a means for avoiding data duplication and thereby minimize blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` field to determine whether an asset record with that `fingerprint` value already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain along with its accompanying issuance record (assuming the issuance record is also verified by the network). However, if an asset record with the same asset `id` already exists in the blockchain, the new asset record is rejected from incorporation in the blockchain and a reference is returned to the existing asset record. 
+As a means for avoiding data duplication and thereby minimize blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` field to determine whether an asset record with that fingerprint value already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain along with its accompanying issuance record (assuming the issuance record is also verified by the network). However, if an asset record with the same fingerprint value already exists in the blockchain, the new asset record is rejected from incorporation in the blockchain. In this second case, the issuance record(s) submitted in the same issuance request with the rejected asset record will still be verified by the bitmarkd nodes, even though the accompanying asset record was rejected. In this last case, if the corresponding issuance records are successfully verified by the bitmarkd nodes, they will added to the blockchain; however, their `asset` field will point to the original asset record rather than the rejected asset record that was submitted with the issuance request. 
 
-One implication of this policy is that once an asset record has been added to the blockchain all subsequent bitmarks issued from that asset record must use the `name` and `metadata` fields for that asset record. In other words, the first asset record to register its unique fingerprint in the blockchain will forever take priority over any subsequent asset records with the same fingerprint value. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmarks will always reference the original asset record in the blockchain. 
+One implication of this policy is that once an asset record has been added to the blockchain all subsequent bitmarks that point to that asset record will reference that asset record's `name` and `metadata` fields. In other words, the first asset record to register its unique fingerprint in the blockchain will forever take priority over any subsequent asset records with the same fingerprint value. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmarks will always reference the original asset record in the blockchain. 
 
-Issuing a bitmark [POST /issue]
+### Issuing bitmarks [POST /issue]
 
-```
-POST https://api.test.bitmark.com/v1/issue
-``` 
-
-Example request: 
+Example issuance request:
 
 ```
 Content-Type: application/json
@@ -102,6 +98,8 @@ Content-Type: application/json
 ```
 
 ### ASSET PARAMETERS 
+
+Note that the value for the `assets` key in the issuance request may be assigned empty array (```"assets": [],...```) in cases when an issuance request is made for an asset record that already exists in the blockchain.
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
