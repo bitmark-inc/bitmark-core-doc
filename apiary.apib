@@ -35,6 +35,13 @@ To enable this recording of property titles across the full depth and breadth of
 
 Unlike conventional property systems that rely on a handful of trusted government officials to act as centralized gatekeepers, the Bitmark blockchain is an open and transparent property system that is strengthened through the active participation of anyone on the Internet. The integrity of Bitmark’s open-source blockchain is secured by a peer-to-peer network of voluntary participants running the [Bitmark node software](https://bitmark.com/tools-api/node) called **bitmarkd**. These software nodes are incentivized to participate in verifying Bitmark property transactions through the possibility of winning monetary and property rewards. This strategy of rewarding an open network of peers for competitively verifying the results of one another’s work creates an impregnable security model that is an emergent property of the individual peer interactions themselves. Unlike centralized property systems, which suffer from increased negative externalities as larger populations exploit the shared resource, Bitmark’s decentralized blockchain grows more resilient and valuable as the network grows. The resulting system achieves extremely low transaction costs by supplanting conventional centrally controlled property systems with a secure distributed ledger for recording digital property titles for any digital asset.
 
+### How does a bitmark work? 
+
+At a technical level, a bitmark is defined as a digitally signed chain consisting of a single issuance record and one or more transfer records. A bitmark is created by submitting an **issuance record** to along with an **asset record** (if the corresponding asset has not been previously registered in the Bitmark blockchain). This issuance record serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or to the original issuance record. Thus, a bitmark consists of a chain of issuance and transfer records that weaves in and out of different blocks of transactions to create its provenance. The authenticity of each property’s provenance is maintained by continuously verifying this chain of owner signatures:
+
+![bitmark diagram](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark.png?raw=true)
+
+As an example, consider the figure above, in which Alice issues a bitmark for a specific digital asset by submitting a digitally signed issuance record and a digitally signed asset record to the Core API. This initial issuance record lists Alice herself as the initial bitmark owner. Once the asset and issuance records have been verified by the Bitmark network, they are aggregated into the latest block of the Bitmark blockchain (let’s say block 13). When Alice later wishes to transfer ownership of the property to Bob, Alice creates and signs a transfer record that contains a link back to her previous issuance record and designates Bob as the new owner. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. 
 
 ## Version & Base URL 
 
@@ -52,17 +59,13 @@ https://api.test.bitmark.com/v1/
 The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.org/wiki/HTTPS) to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
 
 
-# Group Bitmarks
+# Group Transactions
 
-At a technical level, a bitmark is defined as a digitally signed chain consisting of a single issuance record and one or more transfer records. A bitmark is created by submitting an **issuance record** to along with an **asset record** (if the corresponding asset has not been previously registered in the Bitmark blockchain). This issuance record serves as the "head" of the bitmark's chain of ownership. Subsequent transfers of ownership are recorded by submitting **transfer records** for the bitmark. These transfer records establish a permanent chain of ownership by linking back to the previous record in the chain — either to a previous transfer record or to the original issuance record. Thus, a bitmark consists of a chain of issuance and transfer records that weaves in and out of different blocks of transactions to create its provenance. The authenticity of each property’s provenance is maintained by continuously verifying this chain of owner signatures:
 
-![bitmark diagram](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark.png?raw=true)
-
-As an example, consider the figure above, in which Alice issues a bitmark for a specific digital asset by submitting a digitally signed issuance record and a digitally signed asset record to the Core API. This initial issuance record lists Alice herself as the initial bitmark owner. Once the asset and issuance records have been verified by the Bitmark network, they are aggregated into the latest block of the Bitmark blockchain (let’s say block 13). When Alice later wishes to transfer ownership of the property to Bob, Alice creates and signs a transfer record that contains a link back to her previous issuance record and designates Bob as the new owner. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. 
 
 This section of the Bitmark Core API describes the objects and methods for generating bitmark issuances and transfers. 
 
-## Issuing bitmarks [POST /issue]
+## Issuances [POST /issue]
 
 This API supports issuing bitmarks, which is the process by which new bitmarks are added to the Bitmark blockchain. Issuance is also the process by which new asset records are registered in the Bitmark blockchain. An **asset** is any digital object, including files, applications, code, and data. Issuing a bitmark for an asset creates a digital property with a permananent reference to the corresponding asset record. This permananent link between bitmark issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
 
@@ -211,7 +214,7 @@ Possible error messages include:
 
 
 
-## Transferring bitmarks [POST /transfer]
+## Transfers [POST /transfer]
 
 It will return a transaction id if the request has submmitted to the blockchain.
 
@@ -299,6 +302,9 @@ The transfer records is returned by the API call `/bitmarks`. It has more attrib
                 "message": "unable to connect to a bitmarkd node"
             }
 
+# Group Queries
+
+Description text ... 
 
 ## Querying for a specific bitmark [GET /bitmarks/{bitmark_id}{?asset,provenance,pending}]
 
@@ -466,12 +472,7 @@ Get all the bitmarks that changed in a specific range of time that match the giv
                 }
             ]
         }
-
-# Group Assets
-
-An **asset** is any digital object, including files, applications, code, and data. Assets are registered in the Bitmark system for the purpose of issuing bitmarks for them. Issuing a bitmark for an asset creates a digital property with a permananent reference to the underlying asset. This permananent link between bitmark issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
-
-This section of the Bitmark Core API describes the methods for querying for assets in the Bitmark system. 
+ 
 
 ## Querying for a specific asset [GET /assets/{asset_id}]
 
