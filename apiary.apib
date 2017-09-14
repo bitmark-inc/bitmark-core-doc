@@ -152,7 +152,7 @@ Possible error messages include:
 | `402` | Not enough of credits |
 | `500` | Unable to connect to a bitmarkd node |
 
-### Issuance [POST]
+### Issue bitmarks [POST]
 
 + Request (application/json)
 
@@ -215,7 +215,7 @@ Possible error messages include:
 
 
 
-## Transfer [POST /transfer]
+## Transfer [/transfer]
 
 It will return a transaction id if the request has submmitted to the blockchain.
 
@@ -258,6 +258,8 @@ The payload is made by concatenating the signature after the packed record
 The transfer records is returned by the API call `/bitmarks`. It has more attributes to expose more information about the transfer as bellow:
 
 (TBA)
+
+### Transfer bitmarks [POST]
 
 + Request (application/json)
 
