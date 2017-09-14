@@ -123,7 +123,7 @@ The `assets` object accepts an array of multiple asset records within a single i
 | `fingerprint`  | string <br> **required** | Unique identifier for the asset record in the blockchain.  Maximum length is 1,024 Unicode characters. |
 | `name` | string <br> **required** | The name of the asset. Maximum length is 64 Unicode characters. |
 | `metadata` | string <br> *optional* | A key-value dictionary represented by a maximum 1,024 Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]`with the Unicode character `0x0000` as the separator token.|
-| `registrant` | string <br> **required** | Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the accountholder registering the asset. |
+| `registrant` | public key <br> **required** | Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the accountholder registering the asset. |
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 
 **ISSUANCE PARAMETERS**
@@ -134,7 +134,7 @@ The `issues` object accepts an array of multiple issuance records within a singl
 |---:|---|---|
 | `asset`  | hash <br> **required** | [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash format guarantees a consistent `asset` value size regardless of the original size of the asset fingerprint.  |
 | `nonce` | uint64 <br> **required** | A counter value that distinguishes between different issuances for the same `asset` value. |
-| `owner` | string <br> **required** | Public key representing of the account holder issuing the bitmark. |
+| `owner` | public key <br> **required** | Public key representing of the account holder issuing the bitmark. |
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 
 **RESPONSES**
@@ -234,8 +234,8 @@ It will return a transaction id if the request has submmitted to the blockchain.
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
-| `link` | string <br> **required** | `id` of the previous record in the bitmark. |
-| `owner` | string <br> **required** | Public key for the accountholder receiving the bitmark transfer. |
+| `link` | hash <br> **required** | `id` of the previous record in the bitmark. |
+| `owner` | public key <br> **required** | Public key for the accountholder receiving the bitmark transfer. |
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 | `payment` | string <br> *optional* |     - currency code (bitcoin is `0x01`) - payment address (string)  - amount  |
 
