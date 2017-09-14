@@ -65,7 +65,7 @@ The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.or
 
 This section of the Bitmark Core API describes the objects and methods for generating bitmark issuances and transfers. 
 
-## Issuances
+## Issuance [/issue]
 
 This API supports issuing bitmarks, which is the process by which new bitmarks are added to the Bitmark blockchain. Issuance is also the process by which new asset records are registered in the Bitmark blockchain. An **asset** is any digital object, including files, applications, code, and data. Issuing a bitmark for an asset creates a digital property with a permananent reference to the corresponding asset record. This permananent link between bitmark issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
 
@@ -152,7 +152,7 @@ Possible error messages include:
 | `402` | Not enough of credits |
 | `500` | Unable to connect to a bitmarkd node |
 
-### Issuance [POST /issue]
+### Issuance [POST]
 
 + Request (application/json)
 
