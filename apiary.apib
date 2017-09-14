@@ -163,10 +163,9 @@ bitmark_id: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03 (st
 
 + Parameters
 
-    + assets: [...] (array, required) - Accepts an array of multiple asset records within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned an empty array value in cases when an issuance request is made for an asset that already exists in the blockchain.
+    + assets: [...] (array, required) Accepts an array of multiple asset records within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned an empty array value in cases when an issuance request is made for an asset that already exists in the blockchain.
         + Default: []
-    + fingerprint: test_fingerprint (string, required) Unique identifier for the asset record in the blockchain.  Maximum length is 1,024 Unicode characters.
-        + Default: false
+    + fingerprint: test_fingerprint (string, required) - Unique identifier for the asset record in the blockchain.  Maximum length is 1,024 Unicode characters.
     + asset: true (boolean, optional) - Option parameter to return the corresponding asset record.
         + Default: false
     + pending: true (boolean, optional) - Option parameter to tell the server whether to take pending transactions into account
