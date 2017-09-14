@@ -25,11 +25,11 @@ One function of property titles is to serve as "containers" for transferring pro
 
 ### What is the Bitmark property system? 
 
-The Bitmark property system is a universal property system for conferring the same property rights to digital assets that have long existed for physical assets. This system records ownership claims for digital assets as digital property titles known as **bitmarks**. Thus, in the digital world:
+The Bitmark property system is a universal property system for conferring the same property rights to digital assets that have long existed for physical assets. This system records ownership claims for digital assets as digital property titles known as **bitmarks**. A **digital asset** is any digital object, including files, applications, code, and data. Thus, in the digital world:
 
 > **digital property = digital asset + bitmark** 
 
-To enable this recording of property titles across the full depth and breadth of the Internet, Bitmark supplements existing methods for tracking provenance with a universally accessible property ledger known as the **Bitmark blockchain**. Blockchain technology is the key innovation of the [Bitcoin currency](https://bitcoin.org/bitcoin.pdf) and refers to a digital ledger that is publicly yet anonymously shared to all members of a peer-to-peer network. The Bitmark blockchain contains every single property title and ownership transfer ever recorded in the Bitmark system. This Internet-native ownership registry allows the Bitmark system to satisfy all the functional requirements of conventional property systems in a single, low-cost public data resource:
+To enable this recording of property titles across the full depth and breadth of the Internet, Bitmark supplements existing methods for tracking provenance with a universally accessible property ledger known as the **Bitmark blockchain**. Blockchain technology is the key innovation of the [Bitcoin currency](https://bitcoin.org/bitcoin.pdf) and refers to a digital ledger that is publicly yet anonymously shared to all members of a peer-to-peer network. The Bitmark blockchain contains a complete history of every single digital property title and title transfer record in the entire Bitmark system. This Internet-native property system satisfies all the functional requirements of conventional property systems in a single, low-cost public data resource:
 
 ![Bitmark system](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark_system.png?raw=true)
 
@@ -71,13 +71,15 @@ The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.or
 
 ## Introduction 
 
-This API supports issuing bitmarks, which is the process by which new bitmarks are added to the Bitmark blockchain. Issuance is also the process by which new asset records are registered in the Bitmark blockchain. An **asset** is any digital object, including files, applications, code, and data. Issuing a bitmark for an asset creates a digital property with a permananent reference to the corresponding asset record. This permananent link between issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
+The Bitmark Core API supports bitmark issuance requests, which is the process for creating new digital properties. Since a digital property is defined as an asset plus a bitmark, issuance is also the process by which new asset records are registered in the Bitmark blockchain. Issuing a bitmark for an asset creates a new digital property with a permananent reference to the corresponding asset record. This permananent link between issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
 
-As a means for avoiding data duplication and thereby minimize blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` field to determine whether an asset record with that fingerprint value already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain along with its accompanying issuance record (assuming the issuance record is also verified by the network). However, if an asset record with the same fingerprint value already exists in the blockchain, the new asset record is rejected from incorporation in the blockchain. In this second case, the issuance record(s) submitted in the same issuance request with the rejected asset record will still be verified by the bitmarkd nodes, even though the accompanying asset record was rejected. If the corresponding issuance records are successfully verified by the bitmarkd nodes, they will added to the blockchain; however, their `asset` field will point to the original asset record rather than the rejected asset record that was submitted with the issuance request. 
+As a means for avoiding data duplication and thereby minimize blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` field to determine whether an asset record with that fingerprint value already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain along with its accompanying issuance record (assuming the issuance record is also verified by the network). 
+
+However, if an asset record with the same fingerprint value already exists in the blockchain, the new asset record is rejected from incorporation in the blockchain. In this second case, the issuance record(s) submitted in the same issuance request with the rejected asset record will still be verified by the bitmarkd nodes, even though the accompanying asset record was rejected. If the corresponding issuance records are successfully verified by the bitmarkd nodes, they will added to the blockchain; however, their `asset` field will point to the original asset record rather than the rejected asset record that was submitted with the issuance request. 
 
 One implication of this policy is that, once an asset record has been added to the blockchain, all subsequent bitmarks that point to that asset record will reference that asset record's `name` and `metadata` fields. In other words, the first asset record to register its unique fingerprint in the blockchain will forever take priority over any subsequent asset records with the same fingerprint value. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmarks will always reference the original asset record in the blockchain. 
 
-## Issuance request [POST /issue]
+## Issuance request example [POST /issue]
 
 **ISSUANCE REQUEST EXAMPLE**
 
@@ -110,7 +112,7 @@ Content-Type: application/json
 }
 ```
 
-**ASSET PARAMETERS**
+**ASSET RECORD PARAMETERS**
 
 The `assets` object accepts an array of multiple asset records within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned an empty array value (`"assets": [],...`) in cases when an issuance request is made for an asset that already exists in the blockchain.
 
@@ -122,22 +124,22 @@ The `assets` object accepts an array of multiple asset records within a single i
 | `registrant` | public key <br> **required** | Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the accountholder registering the asset. |
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
 
-**ISSUANCE PARAMETERS**
+**ISSUANCE RECORD PARAMETERS**
 
 The `issues` object accepts an array of multiple issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record. 
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
-| `asset`  | hash <br> **required** | [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash format guarantees a consistent `asset` value size regardless of the original size of the asset fingerprint.  |
+| `asset`  | string <br> **required** | [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash guarantees a consistent `asset` value string length and format regardless of the original format of the asset fingerprint.  |
 | `nonce` | uint64 <br> **required** | A counter value that distinguishes between different issuances for the same `asset` value. |
-| `owner` | public key <br> **required** | Public key representing of the account holder issuing the bitmark. |
-| `signature` | binary <br> **required** | binary value (address without checksum) ??? |
+| `owner` | string <br> **required** | Public key representing of the account holder issuing the bitmark. |
+| `signature` | string <br> **required** | String value of signature hash |
 
 **RESPONSES**
 
-The successful issuance API request returns an array of bitmark `id` objects corresponding to the requested `issues` array. 
+The successful issuance request returns an array of bitmark `id` objects corresponding to the requested `issues` array. 
 
-Issuance response example: 
+Issuance request response example: 
 
 ```
 [
@@ -149,7 +151,7 @@ Issuance response example:
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
-| `id` | string | Unique identifying hash for the issued bitmark. |
+| `id` | string | [SHA3-256 hash]((https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the issuance record (including signature), which also servers as the `bitmark_id`. |
 
 Possible error messages include: 
 
@@ -223,49 +225,66 @@ Possible error messages include:
 
 # Group Transfer
 
-It will return a transaction id if the request has submmitted to the blockchain.
+## Introduction 
 
+Bitmark Core API supports bitmark transfer requests, which is the process of transferring bitmark ownership from one Bitmark account to another. 
 
-#### PARAMETERS 
+### Transfer request example [POST /transfer]
+
+** TRANSFER REQUEST EXAMPLE**
+
+```
+POST https://api.test.bitmark.com/v1/transfer
+```
+
+Sample transfer request:
+
+```
+Content-Type: application/json
+{
+    transfer: {
+            "link": "6776599a5fd4f2ade1ca87ee5fffd0295bb69b1969ffab1ec042a5f71ef74209",
+            "owner": "fqN6WnjUaekfrqBvvmsjVskoqXnhJ632xJPHzdSgReC6bhZGuP",
+            "signature": "e14642c9b9f0e1409ad2a0b9a248bf356ee9a9854a4c4f602d3de8daccf5cd11ee270c945c7d3bb58a3fc2858c109bdb9ad31914d2e1a1867383fdcd1f300f0e"
+    }   
+}
+```
+
+**TRANSFER RECORD PARAMETERS**
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
-| `link` | hash <br> **required** | `id` of the previous record in the bitmark. |
-| `owner` | public key <br> **required** | Public key for the accountholder receiving the bitmark transfer. |
-| `signature` | binary <br> **required** | binary value (address without checksum) ??? |
+| `link`  | string <br> **required** | [SHA3-256 hash]((https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the most recently confirmed record (including signature) for the bitmark you wish to transfer. The most recent record may be either an issuance record or another transfer record. The most recent record is hashed as a means for guaranteeing a consistent strength length and format regardless of the its original format.  |
+| `owner` | string <br> **required** | Public key for the accountholder receiving the bitmark transfer. |
+| `signature` | string <br> **required** | String value of signature hash |
 | `payment` | string <br> *optional* |     - currency code (bitcoin is `0x01`) - payment address (string)  - amount  |
 
-ans
-#### Creating a transfer record
+**RESPONSES**
 
-Transfering bitmarks is a 3-step process:
+The successful transfer request returns an array of transfer `txid` objects corresponding to the transfer request. 
 
-1. The binary format of an Issuance Record is packed for signing by concatenating the Issuance Record attribute values in the following order:
-    
-    1. `varint(0x04)` — binary value (the prefix `0x04` identifies the record as a transfer record)
-    2. `link` - binary value
-    3. `owner` — binary value (address without checksum)
-    4. `payment` — If there is a payment: varint value of `0x01`; if not: varint value of `0x00`
-    - `varint(currency_code)`
-    - `payment address` — string value
-    - `varint(amount)`
-2. The issuing account holder must sign the packed record with the account's private key to create a valid `signature`. 
-3. A payload is generated by appending the `signature` from Step 2 to the end of the packed Issuance Record from Step 1.
+Transfer request response example: 
 
-The issue records is returned by the API call `/bitmarks`. Its data is completely as a normal transfer to the issuer, please look at transfer record for more details.
+```
+[
+  {
+    "txid": "fff75e50fcdef3e674b35a166de6b911f669fdd5c1f4d7d461942f7edbee63aa"
+  }
+]
+```
 
-**Signature**
-The owner needs to sign the packed record to create a valid signature.
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `txid` | string | [SHA3-256 hash]((https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the transfer record (including signature). |
 
-**Payload**
-The payload is made by concatenating the signature after the packed record
+Possible error messages include: 
 
-**Database record**
-The transfer records is returned by the API call `/bitmarks`. It has more attributes to expose more information about the transfer as bellow:
+| ERROR CODE  |  ERROR MESSAGE  |
+|---:|---|
+| `400` | Missing parameters or containing parameters in an invalid form |
+| `402` | Not enough of credits |
+| `500` | Unable to connect to a bitmarkd node |
 
-(TBA)
-
-### Transfer request [POST /transfer]
 
 + Request (application/json)
 
@@ -311,7 +330,7 @@ The transfer records is returned by the API call `/bitmarks`. It has more attrib
                 "message": "unable to connect to a bitmarkd node"
             }
 
-# Group Authentication
+# Group Queries
 
 Description text ... 
 
