@@ -79,49 +79,7 @@ However, if an asset record with the same fingerprint value already exists in th
 
 One implication of this policy is that, once an asset record has been added to the blockchain, all subsequent bitmarks that point to that asset record will reference that asset record's `name` and `metadata` fields. In other words, the first asset record to register its unique fingerprint in the blockchain will forever take priority over any subsequent asset records with the same fingerprint value. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmarks will always reference the original asset record in the blockchain. 
 
-## Issuance request [POST /issue]
-
-**ISSUANCE REQUEST EXAMPLE**
-
-```
-POST https://api.test.bitmark.com/v1/issue
-```
-
-Sample issuance request:
-
-```
-Content-Type: application/json
-{
-  "assets": [
-    {
-      "fingerprint": "test_fingerprint",
-      "name": "testcase",
-      "metadata": "",
-      "registrant": "e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU",
-      "signature": "68cbccfd732e494b827aadfa7546de73d4f0c3e69ce1d5ff81d100e2fdc05696969f193a024c9f77ae79900252304c84f0ebdffee2f01b117713a58afb006d06"
-    }
-  ],
-  "issues": [
-    {
-      "asset": "e3edef121b7dd0e30f389716cae89a1589335d7d8aa9fe3802f8b19f19505077ff13a21f4c3374c1f188dd9fe13fcab39f2690e1fdae54473a850e8dc519e882",
-      "nonce": 1499245158002,
-      "owner": "e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU",
-      "signature": "d7cfb3f008000bffae32b98df6bacf8b5a068d4d29ebc114666fbf354be1c81725bcfb1124613e4dcfdc9674019b0723c4aebe32d4f3ed246dde19176c111308"
-    }
-  ]
-}
-```
-
-**ISSUANCE RECORD PARAMETERS**
-
-The `issues` object accepts an array of multiple issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record. 
-
-| PARAMETER  | TYPE  | DESCRIPTION  |
-|---:|---|---|
-| `asset`  | string <br> **required** | [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash guarantees a consistent `asset` value string length and format regardless of the original format of the asset fingerprint.  |
-| `nonce` | uint64 <br> **required** | A counter value that distinguishes between different issuances for the same `asset` value. |
-| `owner` | string <br> **required** | Public key representing of the account holder issuing the bitmark. |
-| `signature` | string <br> **required** | String value of signature hash |
+## Issuance example [POST /issue]
 
 **RESPONSES**
 
@@ -147,7 +105,7 @@ Possible error messages include:
 | `402` | Not enough of credits |
 | `500` | Unable to connect to a bitmarkd node |
 
-bitmark_id: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03 (string, required) - TXID of the bitmark in the form of hex string
+
 
 + Parameters
 
