@@ -91,6 +91,7 @@ One implication of this policy is that, once an asset record has been added to t
     + registrant: e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU (string, required) - Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the accountholder registering the asset.
     + signature: 68cbccfd732e494b827aadfa7546de73d4f0c3e69ce1d5ff81d100e2fdc05696969f193a024c9f77ae79900252304c84f0ebdffee2f01b117713a58afb006d06 (string, required) - String value of signed hash for the asset record.
     + issues: (array, required) - Accepts an array of multiple issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record.
+        + Default: []
     + asset: e3edef121b7dd0e30f389716cae89a1589335d7d8aa9fe3802f8b19f19505077ff13a21f4c3374c1f188dd9fe13fcab39f2690e1fdae54473a850e8dc519e882 (string, required) - [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash guarantees a consistent `asset` value string length and format regardless of the original format of the asset fingerprint.
     + nonce: 1499245158002 (uint64, required) - A counter value that distinguishes between different issuances for the same `asset` value.
     + owner: e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU (string, required) - Public key representing of the account holder issuing the bitmark.
