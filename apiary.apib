@@ -81,32 +81,6 @@ One implication of this policy is that, once an asset record has been added to t
 
 ## Issuance example [POST /issue]
 
-**RESPONSES**
-
-The successful issuance request returns an array of bitmark `id` objects corresponding to the requested `issues` array: 
-
-```
-[
-  {
-    "id": "fff75e50fcdef3e674b35a166de6b911f669fdd5c1f4d7d461942f7edbee63aa"
-  }
-]
-```
-
-| PARAMETER  | TYPE  | DESCRIPTION  |
-|---:|---|---|
-| `id` | string | [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the issuance record (including signature), which also servers as the `bitmark_id`. |
-
-Possible error messages include: 
-
-| ERROR CODE  |  ERROR MESSAGE  |
-|---:|---|
-| `400` | Missing parameters or containing parameters in an invalid form |
-| `402` | Not enough of credits |
-| `500` | Unable to connect to a bitmarkd node |
-
-
-
 + Parameters
 
     + assets: [...] (array, required) - Accepts an array of multiple asset records within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned an empty array value in cases when an issuance request is made for an asset that already exists in the blockchain.
@@ -145,7 +119,6 @@ Possible error messages include:
         }
 
 + Response 200
-	+ id: fff75e50fcdef3e674b35a166de6b911f669fdd5c1f4d7d461942f7edbee63aa (string) - [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the issuance record (including signature), which also servers as the `bitmark_id`. 
 
     + Body 
     
