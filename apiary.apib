@@ -5,7 +5,7 @@ HOST: https://api.test.bitmark.com/v1/
 
 ## Overview
 
-Bitmark makes simple tools that empower anyone to assert ownership over their digital lives. Although digital assets increasingly constitute what we create and value most in our lives, there is no way for individuals to claim ownership of them. By building a universal digital property system, Bitmark envisions a world in which everyone owns a piece of the digital economy. 
+Bitmark makes simple tools that empower anyone to assert ownership over their digital lives. Although digital assets increasingly constitute what we create and value most, there is no way for individuals to claim ownership of them. By building a universal digital property system, Bitmark envisions a world in which everyone owns a piece of the digital economy. 
 
 The Bitmark Core API is an open REST API that enables creation, transfer, and authentication of digital properties in the Bitmark property system. The Core API's simplified interface allows developers to easily build on the core Bitmark infrastructure by reading from and writing to the open-source Bitmark blockchain.
 
@@ -19,7 +19,7 @@ While most people probably consider property to be the stuff that they own, **pr
 
 ![property rights](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/property.png?raw=true)
 
-A primary function of a property title is to make property rights portable by acting as a "container" that allows property rights to be transferred from one owner to another. For assets that require a property title, transfers of title must be publicly recorded via a centralized government entity, such as a county land registrar or a state department of motor vehicles, in order for the transfer of property rights to be legally recognized. This history of title transfer, or **provenance**, is most often tracked via a formal **property system**, which records the complete ownership history of every property registered in the system:
+One function of property titles is to serve as "containers" for transferring property rights from one owner to another. For assets that require a property title, transfers of title must be publicly recorded via a centralized government entity, such as a county land registrar or a state department of motor vehicles, in order for the transfer of property rights to be legally recognized. This history of title transfer, or **provenance**, is most often tracked via a formal **property system**, which records the complete ownership history of every property registered in the system:
 
 ![property system](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/property_system.png?raw=true)
 
@@ -67,15 +67,11 @@ https://api.test.bitmark.com/v1/
 The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.org/wiki/HTTPS) to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
 
 
-# Group Transactions
+# Group Issuance [/issue]
 
+## Introduction
 
-
-This section of the Bitmark Core API describes the objects and methods for generating bitmark issuances and transfers. 
-
-## Issuance [/issue]
-
-This API supports issuing bitmarks, which is the process by which new bitmarks are added to the Bitmark blockchain. Issuance is also the process by which new asset records are registered in the Bitmark blockchain. An **asset** is any digital object, including files, applications, code, and data. Issuing a bitmark for an asset creates a digital property with a permananent reference to the corresponding asset record. This permananent link between bitmark issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
+This API supports issuing bitmarks, which is the process by which new bitmarks are added to the Bitmark blockchain. Issuance is also the process by which new asset records are registered in the Bitmark blockchain. An **asset** is any digital object, including files, applications, code, and data. Issuing a bitmark for an asset creates a digital property with a permananent reference to the corresponding asset record. This permananent link between issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
 
 As a means for avoiding data duplication and thereby minimize blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` field to determine whether an asset record with that fingerprint value already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain along with its accompanying issuance record (assuming the issuance record is also verified by the network). However, if an asset record with the same fingerprint value already exists in the blockchain, the new asset record is rejected from incorporation in the blockchain. In this second case, the issuance record(s) submitted in the same issuance request with the rejected asset record will still be verified by the bitmarkd nodes, even though the accompanying asset record was rejected. If the corresponding issuance records are successfully verified by the bitmarkd nodes, they will added to the blockchain; however, their `asset` field will point to the original asset record rather than the rejected asset record that was submitted with the issuance request. 
 
@@ -225,7 +221,9 @@ Possible error messages include:
 
 
 
-## Transfer [/transfer]
+# Group Transfer [/transfer]
+
+## Introduction
 
 It will return a transaction id if the request has submmitted to the blockchain.
 
