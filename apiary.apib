@@ -79,7 +79,87 @@ However, if an asset record with the same fingerprint value already exists in th
 
 One implication of this policy is that, once an asset record has been added to the blockchain, all subsequent bitmarks that point to that asset record will reference that asset record's `name` and `metadata` fields. In other words, the first asset record to register its unique fingerprint in the blockchain will forever take priority over any subsequent asset records with the same fingerprint value. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmarks will always reference the original asset record in the blockchain. 
 
-## Issuance example [POST /issue]
+## Issuance request [POST /issue]
+
+**ISSUANCE REQUEST EXAMPLE**
+
+```
+POST https://api.test.bitmark.com/v1/issue
+```
+
+Sample issuance request:
+
+```
+Content-Type: application/json
+{
+  "assets": [
+    {
+      "fingerprint": "test_fingerprint",
+      "name": "testcase",
+      "metadata": "",
+      "registrant": "e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU",
+      "signature": "68cbccfd732e494b827aadfa7546de73d4f0c3e69ce1d5ff81d100e2fdc05696969f193a024c9f77ae79900252304c84f0ebdffee2f01b117713a58afb006d06"
+    }
+  ],
+  "issues": [
+    {
+      "asset": "e3edef121b7dd0e30f389716cae89a1589335d7d8aa9fe3802f8b19f19505077ff13a21f4c3374c1f188dd9fe13fcab39f2690e1fdae54473a850e8dc519e882",
+      "nonce": 1499245158002,
+      "owner": "e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU",
+      "signature": "d7cfb3f008000bffae32b98df6bacf8b5a068d4d29ebc114666fbf354be1c81725bcfb1124613e4dcfdc9674019b0723c4aebe32d4f3ed246dde19176c111308"
+    }
+  ]
+}
+```
+
+**ASSET RECORD PARAMETERS**
+
+The `assets` object accepts an array of multiple asset records within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned an empty array value (`"assets": [],...`) in cases when an issuance request is made for an asset that already exists in the blockchain.
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `fingerprint`  | string <br> **required** | Unique identifier for the asset record in the blockchain.  Maximum length is 1,024 Unicode characters. |
+| `name` | string <br> **required** | The registered name of the asset. Maximum length is 64 Unicode characters. |
+| `metadata` | string <br> *optional* | A key-value dictionary represented by a maximum 1,024 Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]`with the Unicode character `0x0000` as the separator token.|
+| `registrant` | string <br> **required** | Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the account registering the asset. |
+| `signature` | binary <br> **required** |String value of signed hash for the assess record |
+
+**ISSUANCE RECORD PARAMETERS**
+
+The `issues` object accepts an array of multiple issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record. 
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `asset`  | string <br> **required** | [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash guarantees a consistent `asset` value string length and format regardless of the original format of the asset fingerprint.  |
+| `nonce` | uint64 <br> **required** | A counter value that distinguishes between different issuances for the same `asset` value. |
+| `owner` | string <br> **required** | Public key representing of the account issuing the bitmark. |
+| `signature` | string <br> **required** | String value of signed hash for the issuance record. |
+
+**RESPONSES**
+
+The successful issuance request returns an array of bitmark `id` objects corresponding to the requested `issues` array: 
+
+```
+[
+  {
+    "id": "fff75e50fcdef3e674b35a166de6b911f669fdd5c1f4d7d461942f7edbee63aa"
+  }
+]
+```
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `id` | string | [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the issuance record (including signature), which also servers as the `bitmark_id`. |
+
+Possible error messages include: 
+
+| ERROR CODE  |  ERROR MESSAGE  |
+|---:|---|
+| `400` | Missing parameters or containing parameters in an invalid form |
+| `402` | Not enough of credits |
+| `500` | Unable to connect to a bitmarkd node |
+
+bitmark_id: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03 (string, required) - TXID of the bitmark in the form of hex string
 
 + Parameters
 
@@ -88,7 +168,7 @@ One implication of this policy is that, once an asset record has been added to t
     + fingerprint: test_fingerprint (string, required) - Unique identifier for the asset record in the blockchain.  Maximum length is 1,024 Unicode characters.
     + name: testcase (string, required) - The registered name of the asset. Maximum length: 64 Unicode characters.
     + metadata:  (string, optional) - Optional key-value dictionary represented by a maximum 1,024-Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]` with the Unicode character `0x0000` as the separator token.
-    + registrant: e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU (string, required) - Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the accountholder registering the asset.
+    + registrant: e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU (string, required) - Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the account registering the asset.
     + signature: 68cbccfd732e494b827aadfa7546de73d4f0c3e69ce1d5ff81d100e2fdc05696969f193a024c9f77ae79900252304c84f0ebdffee2f01b117713a58afb006d06 (string, required) - String value of signed hash for the asset record.
     + issues: (array, required) - Accepts an array of multiple issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record.
         + Default: []
@@ -121,7 +201,7 @@ One implication of this policy is that, once an asset record has been added to t
 
 + Response 200
 
-    + Body 
+    + Body
     
             [
                 {
@@ -164,15 +244,66 @@ One implication of this policy is that, once an asset record has been added to t
 
 Bitmark Core API supports bitmark transfer requests, which is the process of transferring bitmark ownership from one Bitmark account to another. 
 
-### Transfer example [POST /transfer]
+### Transfer request [POST /transfer]
 
+**TRANSFER REQUEST EXAMPLE**
+
+```
+POST https://api.test.bitmark.com/v1/transfer
+```
+
+Sample transfer request:
+
+```
+Content-Type: application/json
+{
+    transfer: {
+            "link": "6776599a5fd4f2ade1ca87ee5fffd0295bb69b1969ffab1ec042a5f71ef74209",
+            "owner": "fqN6WnjUaekfrqBvvmsjVskoqXnhJ632xJPHzdSgReC6bhZGuP",
+            "signature": "e14642c9b9f0e1409ad2a0b9a248bf356ee9a9854a4c4f602d3de8daccf5cd11ee270c945c7d3bb58a3fc2858c109bdb9ad31914d2e1a1867383fdcd1f300f0e"
+    }   
+}
+```
+
+**TRANSFER RECORD PARAMETERS**
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `link`  | string <br> **required** | [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the most recently confirmed record (including signature) for the bitmark you wish to transfer. The most recently confirmed record may be either an issuance record or another transfer record. the most recently confirmed record is hashed as a means for guaranteeing a consistent strength length and format regardless of record type.  |
+| `owner` | string <br> **required** | Public key for the account receiving the bitmark transfer. |
+| `signature` | string <br> **required** | String value of signature hash |
+| `payment` | string <br> *optional* |     - currency code (bitcoin is `0x01`) - payment address (string)  - amount  |
+
+**RESPONSES**
+
+The successful transfer request returns an array of transfer `txid` objects corresponding to the transfer request: 
+
+```
+[
+  {
+    "txid": "fff75e50fcdef3e674b35a166de6b911f669fdd5c1f4d7d461942f7edbee63aa"
+  }
+]
+```
+
+| PARAMETER  | TYPE  | DESCRIPTION  |
+|---:|---|---|
+| `txid` | string | [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the transfer record (including signature). |
+
+Possible error messages include: 
+
+| ERROR CODE  |  ERROR MESSAGE  |
+|---:|---|
+| `400` | Missing parameters or containing parameters in an invalid form |
+| `402` | Not enough of credits |
+| `500` | Unable to connect to a bitmarkd node |
 
 + Parameters
 
     + link: 6776599a5fd4f2ade1ca87ee5fffd0295bb69b1969ffab1ec042a5f71ef74209 (string, required) - [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the most recently confirmed record (including signature) for the bitmark you wish to transfer. This hash will be identical to the bitmark_id for the most recently confirmed record. The most recently confirmed record may be either an issuance record or another transfer record.
     + owner: fqN6WnjUaekfrqBvvmsjVskoqXnhJ632xJPHzdSgReC6bhZGuP (string, required) - Public key of the account receiving the bitmark transfer.
     + signature: e14642c9b9f0e1409ad2a0b9a248bf356ee9a9854a4c4f602d3de8daccf5cd11ee270c945c7d3bb58a3fc2858c109bdb9ad31914d2e1a1867383fdcd1f300f0e (string, required) - String value of signed hash of the transfer record.
-    + payment: "" (string, optional) - Optional payment object. Currency code (Bitcoin is `0x01`) plus payment address (string)  plus amount. 
+    + payment: "" (string, optional) - Optional payment object. Currency code (Bitcoin is `0x01`) plus payment address (string) plus amount. 
 
 + Request (application/json)
 
