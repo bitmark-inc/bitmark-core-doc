@@ -73,6 +73,8 @@ As a means for avoiding data duplication and thereby minimize blockchain size, a
 
 One implication of this policy is that, once an asset record has been added to the blockchain, all subsequent bitmarks that point to that asset record will reference that asset record's `name` and `metadata` fields. In other words, the first asset record to register its unique fingerprint in the blockchain will forever take priority over any subsequent asset records with the same fingerprint value. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmarks will always reference the original asset record in the blockchain. 
 
+### Issuance [POST]
+
 **ISSUANCE REQUEST EXAMPLE**
 
 ```
@@ -103,8 +105,6 @@ Content-Type: application/json
   ]
 }
 ```
-
-### Issue bitmarks [POST]
 
 **ASSET PARAMETERS**
 
