@@ -112,18 +112,6 @@ Content-Type: application/json
 }
 ```
 
-**ASSET RECORD PARAMETERS**
-
-The `assets` object accepts an array of multiple asset records within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned an empty array value (`"assets": [],...`) in cases when an issuance request is made for an asset that already exists in the blockchain.
-
-| PARAMETER  | TYPE  | DESCRIPTION  |
-|---:|---|---|
-| `fingerprint`  | string <br> **required** | Unique identifier for the asset record in the blockchain.  Maximum length is 1,024 Unicode characters. |
-| `name` | string <br> **required** | The registered name of the asset. Maximum length is 64 Unicode characters. |
-| `metadata` | string <br> *optional* | A key-value dictionary represented by a maximum 1,024 Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]`with the Unicode character `0x0000` as the separator token.|
-| `registrant` | string <br> **required** | Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the accountholder registering the asset. |
-| `signature` | binary <br> **required** | binary value (address without checksum) ??? |
-
 **ISSUANCE RECORD PARAMETERS**
 
 The `issues` object accepts an array of multiple issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record. 
@@ -161,7 +149,7 @@ Possible error messages include:
 
 bitmark_id: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03 (string, required) - TXID of the bitmark in the form of hex string
 
-+ Parameters
++ Asset Request Parameters
 
     + assets: [...] (array, required) - Accepts an array of multiple asset records within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned an empty array value in cases when an issuance request is made for an asset that already exists in the blockchain.
         + Default: []
@@ -169,8 +157,12 @@ bitmark_id: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03 (st
     + name: testcase (string, required) - The registered name of the asset. Maximum length: 64 Unicode characters.
     + metadata: "" (string, optional) - A key-value dictionary represented by a maximum 1,024-Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]` with the Unicode character `0x0000` as the separator token.
     + registrant: e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU (string, required) - Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the accountholder registering the asset.
-    + signature: 68cbccfd732e494b827aadfa7546de73d4f0c3e69ce1d5ff81d100e2fdc05696969f193a024c9f77ae79900252304c84f0ebdffee2f01b117713a58afb006d06 (string, required) - String value of signature hash. 
-  
+    + signature: 68cbccfd732e494b827aadfa7546de73d4f0c3e69ce1d5ff81d100e2fdc05696969f193a024c9f77ae79900252304c84f0ebdffee2f01b117713a58afb006d06 (string, required) - String value of signature hash for the asset record.
+    + issues: [...] (array, required) - Accepts an array of multiple issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record.
+    + asset: e3edef121b7dd0e30f389716cae89a1589335d7d8aa9fe3802f8b19f19505077ff13a21f4c3374c1f188dd9fe13fcab39f2690e1fdae54473a850e8dc519e882 (string, required) - [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash guarantees a consistent `asset` value string length and format regardless of the original format of the asset fingerprint.
+    + nonce: 1499245158002 (uint64, required) - A counter value that distinguishes between different issuances for the same `asset` value.
+    + owner: e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU (string, required) - Public key representing of the account holder issuing the bitmark.
+    + signature: d7cfb3f008000bffae32b98df6bacf8b5a068d4d29ebc114666fbf354be1c81725bcfb1124613e4dcfdc9674019b0723c4aebe32d4f3ed246dde19176c111308 (string, required) - String value of signature hash for the issuance record. 
 
 + Request (application/json)
 
