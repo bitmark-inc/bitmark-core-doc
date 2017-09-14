@@ -166,8 +166,8 @@ bitmark_id: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03 (st
     + assets: [...] (array, required) - Accepts an array of multiple asset records within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned an empty array value in cases when an issuance request is made for an asset that already exists in the blockchain.
         + Default: []
     + fingerprint: test_fingerprint (string, required) - Unique identifier for the asset record in the blockchain.  Maximum length is 1,024 Unicode characters.
-    + name: true (string, required) - The registered name of the asset. 
-        + Max: 64 Unicode characters.
+    + name: testcase (string, required) - The registered name of the asset. Maximum length: 64 Unicode characters.
+    + metadata: "" (string, optional) - A key-value dictionary represented by a maximum 1,024 Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]`with the Unicode character `0x0000` as the separator token.
   
 
 + Request (application/json)
