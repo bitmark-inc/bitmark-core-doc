@@ -45,9 +45,9 @@ Subsequent transfers of ownership are recorded by submitting **transfer records*
 
 ![bitmark diagram](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark.png?raw=true)
 
-As an example, consider the figure above, in which Alice issues a bitmark for a specific digital asset by submitting a digitally signed issuance record and a digitally signed asset record to the Core API. This initial issuance record lists Alice herself as the initial bitmark owner. Once the asset and issuance records have been verified by the Bitmark network, they are aggregated into the latest block of the Bitmark blockchain (let’s say block 13). 
+As an example, consider the figure above, in which Alice submits an issuance request for a specific digital asset by submitting both a digitally signed issuance record and a digitally signed asset record. This initial issuance record lists Alice herself as the initial bitmark owner. Once the asset and issuance records have been verified by the Bitmark network, they are aggregated into the latest block of the Bitmark blockchain (let’s say block 13). 
 
-When Alice later wishes to transfer ownership of the property to Bob, Alice creates and signs a transfer record that contains a link back to her previous issuance record and designates Bob as the new owner. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. 
+When Alice later wishes to transfer ownership of the bitmarked property to Bob, Alice signs and submits a transfer record that contains a link back to her previous issuance record and designates Bob as the new owner. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. 
 
 ## Version & Base URL 
 
