@@ -171,7 +171,7 @@ Bitmark Core API supports bitmark transfer requests, which is the process of tra
     + link: 6776599a5fd4f2ade1ca87ee5fffd0295bb69b1969ffab1ec042a5f71ef74209 (string, required) - [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the most recently confirmed record (including signature) for the bitmark you wish to transfer. This hash will be identical to the bitmark_id for the most recently confirmed record. The most recently confirmed record may be either an issuance record or another transfer record.
     + owner: fqN6WnjUaekfrqBvvmsjVskoqXnhJ632xJPHzdSgReC6bhZGuP (string, required) - Public key of the account receiving the bitmark transfer.
     + signature: e14642c9b9f0e1409ad2a0b9a248bf356ee9a9854a4c4f602d3de8daccf5cd11ee270c945c7d3bb58a3fc2858c109bdb9ad31914d2e1a1867383fdcd1f300f0e (string, required) - String value of signed hash of the transfer record.
-    + payment "" (string, optional) -  Currency code (bitcoin is `0x01`) plus payment address (string)  plus amount. 
+    + payment: "" (string, optional) - Currency code (Bitcoin is `0x01`) plus payment address (string)  plus amount. 
 
 + Request (application/json)
 
