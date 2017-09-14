@@ -33,7 +33,9 @@ To enable this recording of property titles across the full depth and breadth of
 
 ![Bitmark system](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark_system.png?raw=true)
 
-Unlike conventional property systems that rely on a handful of trusted government officials to act as centralized gatekeepers, the Bitmark blockchain is an open and transparent property system that is strengthened through the active participation of anyone on the Internet. The integrity of Bitmark’s open-source blockchain is secured by a peer-to-peer network of voluntary participants running the [Bitmark node software](https://bitmark.com/tools-api/node) called **bitmarkd**. These software nodes are incentivized to participate in verifying Bitmark property transactions through the possibility of winning monetary and property rewards. This strategy of rewarding an open network of peers for competitively verifying the results of one another’s work creates an impregnable security model that is an emergent property of the individual peer interactions themselves. Unlike centralized property systems, which suffer from increased negative externalities as larger populations exploit the shared resource, Bitmark’s decentralized blockchain grows more resilient and valuable as the network grows. The resulting system achieves extremely low transaction costs by supplanting conventional centrally controlled property systems with a secure distributed ledger for recording digital property titles for any digital asset.
+Unlike conventional property systems that rely on a handful of trusted government officials to act as centralized gatekeepers, the Bitmark blockchain is an open and transparent property system that is strengthened through the active participation of anyone on the Internet. The integrity of Bitmark’s open-source blockchain is secured by a peer-to-peer network of voluntary participants running the [Bitmark node software](https://bitmark.com/tools-api/node) called **bitmarkd**. These software nodes are incentivized to participate in verifying Bitmark property transactions through the possibility of winning monetary and property rewards. 
+
+This strategy of rewarding an open network of peers for competitively verifying the results of one another’s work creates an impregnable security model that is an emergent property of the individual peer interactions themselves. Unlike centralized property systems, which suffer from increased negative externalities as larger populations exploit the shared resource, Bitmark’s decentralized blockchain grows more resilient and valuable as the network grows. The resulting system achieves extremely low transaction costs by supplanting conventional centrally controlled property systems with a secure distributed ledger for recording digital property titles for any digital asset.
 
 ### How does a bitmark work? 
 
@@ -124,7 +126,7 @@ The `issues` object accepts an array of multiple issuance records within a singl
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
-| `asset`  | string <br> **required** | [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash format guarantees a consistent `asset` value size regardless of the original size of the asset fingerprint.  |
+| `asset`  | hash <br> **required** | [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash format guarantees a consistent `asset` value size regardless of the original size of the asset fingerprint.  |
 | `nonce` | uint64 <br> **required** | A counter value that distinguishes between different issuances for the same `asset` value. |
 | `owner` | string <br> **required** | Public key representing of the account holder issuing the bitmark. |
 | `signature` | binary <br> **required** | binary value (address without checksum) ??? |
