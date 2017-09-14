@@ -67,9 +67,7 @@ https://api.test.bitmark.com/v1/
 The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.org/wiki/HTTPS) to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
 
 
-# Issuance [/issue]
-
-## Introduction
+# Group Issuance
 
 This API supports issuing bitmarks, which is the process by which new bitmarks are added to the Bitmark blockchain. Issuance is also the process by which new asset records are registered in the Bitmark blockchain. An **asset** is any digital object, including files, applications, code, and data. Issuing a bitmark for an asset creates a digital property with a permananent reference to the corresponding asset record. This permananent link between issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
 
@@ -77,7 +75,7 @@ As a means for avoiding data duplication and thereby minimize blockchain size, a
 
 One implication of this policy is that, once an asset record has been added to the blockchain, all subsequent bitmarks that point to that asset record will reference that asset record's `name` and `metadata` fields. In other words, the first asset record to register its unique fingerprint in the blockchain will forever take priority over any subsequent asset records with the same fingerprint value. While other Bitmark accountholders can still issue bitmarks for the original asset record (not only the original asset `registrant`), these bitmarks will always reference the original asset record in the blockchain. 
 
-### Issuance [POST]
+### Issuance [POST /issue]
 
 **ISSUANCE REQUEST EXAMPLE**
 
@@ -222,8 +220,6 @@ Possible error messages include:
 
 
 # Transfer [/transfer]
-
-## Introduction
 
 It will return a transaction id if the request has submmitted to the blockchain.
 
