@@ -267,7 +267,7 @@ Content-Type: application/json
 
 | PARAMETER  | TYPE  | DESCRIPTION  |
 |---:|---|---|
-| `link`  | string <br> **required** | [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the most recently confirmed record (including signature) for the bitmark you wish to transfer. The most recently confirmed record may be either an issuance record or another transfer record. the most recently confirmed record is hashed as a means for guaranteeing a consistent strength length and format regardless of record type.  |
+| `link`  | string <br> **required** | [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the most recently confirmed record (including signature) for the bitmark you wish to transfer. This hash will be identical to the bitmark_id for the most recently confirmed record. The most recently confirmed record may be either an issuance record or another transfer record.  |
 | `owner` | string <br> **required** | Public key for the account receiving the bitmark transfer. |
 | `signature` | string <br> **required** | String value of signature hash |
 | `payment` | string <br> *optional* |     - currency code (bitcoin is `0x01`) - payment address (string)  - amount  |
