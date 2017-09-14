@@ -104,6 +104,8 @@ Content-Type: application/json
 }
 ```
 
+### Issue bitmarks [POST]
+
 **ASSET PARAMETERS**
 
 The `assets` object accepts an array of multiple asset records within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned an empty array value (`"assets": [],...`) in cases when an issuance request is made for an asset that already exists in the blockchain.
@@ -153,7 +155,6 @@ Possible error messages include:
 | `402` | Not enough of credits |
 | `500` | Unable to connect to a bitmarkd node |
 
-### Issue bitmarks [POST]
 
 + Request (application/json)
 
