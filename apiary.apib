@@ -166,7 +166,7 @@ Possible error messages include:
     + fingerprint: (string, required) - Unique identifier for the asset record in the blockchain.  Maximum length is 1,024 Unicode characters.
     + name: testcase (string, required) - The registered name of the asset. Maximum length: 64 Unicode characters.
     + metadata:  (string, optional) - Optional key-value dictionary represented by a maximum 1,024-Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]` with the Unicode character `0x0000` as the separator token.
-    + registrant: e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU (string, required) - Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the account registering the asset.
+    + registrant: (string, required) - Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the account registering the asset.
     + signature: (string, required) - String value of signed hash for the asset record.
     + issues: (array, required) - Accepts an array of multiple issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record.
         + Default: []
@@ -298,9 +298,9 @@ Possible error messages include:
 
 + Parameters
 
-    + link: 6776599a5fd4f2ade1ca87ee5fffd0295bb69b1969ffab1ec042a5f71ef74209 (string, required) - [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the most recently confirmed record (including signature) for the bitmark you wish to transfer. This hash will be identical to the bitmark_id for the most recently confirmed record. The most recently confirmed record may be either an issuance record or another transfer record.
-    + owner: fqN6WnjUaekfrqBvvmsjVskoqXnhJ632xJPHzdSgReC6bhZGuP (string, required) - Public key of the account receiving the bitmark transfer.
-    + signature: e14642c9b9f0e1409ad2a0b9a248bf356ee9a9854a4c4f602d3de8daccf5cd11ee270c945c7d3bb58a3fc2858c109bdb9ad31914d2e1a1867383fdcd1f300f0e (string, required) - String value of signed hash of the transfer record.
+    + link: (string, required) - [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the most recently confirmed record (including signature) for the bitmark you wish to transfer. This hash will be identical to the bitmark_id for the most recently confirmed record. The most recently confirmed record may be either an issuance record or another transfer record.
+    + owner: (string, required) - Public key of the account receiving the bitmark transfer.
+    + signature: (string, required) - String value of signed hash of the transfer record.
     + payment: "" (string, optional) - Optional payment object. Currency code (Bitcoin is `0x01`) plus payment address (string) plus amount. 
 
 + Request (application/json)
@@ -368,7 +368,7 @@ Queries the Bitmark blockchain ...
 
 + Parameters
 
-    + bitmark_id: ebb2c6d8ec37a50b1f755da14d3874e8fd3510678665da27391f063387ad4c03 (string, required) - TXID of the bitmark in the form of hex string
+    + bitmark_id: (string, required) - TXID of the bitmark in the form of hex string
     + provenance: true (boolean, optional) - Ask the server to also return the bitmark provenance
         + Default: false
     + asset: true (boolean, optional) - Option parameter to return the corresponding asset record.
