@@ -45,7 +45,7 @@ Subsequent transfers of ownership are recorded by submitting **transfer records*
 
 ![bitmark diagram](https://github.com/bitmark-inc/bitmark-core-doc/blob/master/bitmark.png?raw=true)
 
-As an example, consider the figure above, in which Alice submits an issuance request for a specific digital asset by submitting both a digitally signed issuance record and a digitally signed asset record. This initial issuance record lists Alice herself as the initial bitmark owner. Once the asset and issuance records have been verified by the Bitmark network, they are aggregated into the latest block of the Bitmark blockchain (let’s say block 13). 
+As an example, consider the figure above, in which Alice submits an issuance request for a specific digital asset. Since Alice's issuance request is for an asset that was not previously registered in the blockchain, the request contains both a digitally signed issuance record for the new bitmark and a digitally signed asset record for the new asset. This initial issuance record lists Alice herself as the initial bitmark owner. Once the asset and issuance records have been verified by the Bitmark network, they are aggregated into the latest block of the Bitmark blockchain (let’s say block 13). 
 
 When Alice later wishes to transfer ownership of the bitmarked property to Bob, Alice signs and submits a transfer record that contains a link back to her previous issuance record and designates Bob as the new owner. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. 
 
@@ -73,7 +73,7 @@ The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.or
 
 The Bitmark Core API supports bitmark issuance requests, which is the process for creating new digital properties. Since a digital property is defined as an asset plus a bitmark, issuance is also the process by which new asset records are registered in the Bitmark blockchain. Issuing a bitmark for an asset creates a new digital property with a permananent reference to the corresponding asset record. This permananent link between issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
 
-As a means for avoiding data duplication and thereby minimizing blockchain size, assets can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` field to determine whether an asset record with that fingerprint value already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain along with its accompanying issuance record (assuming the issuance record is also verified by the network). 
+As a means for avoiding data duplication and thereby minimizing blockchain size, an asset can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` field to determine whether an asset record with that fingerprint value already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain along with its accompanying issuance record (assuming the issuance record is also verified by the network). 
 
 However, if an asset record with the same fingerprint value already exists in the blockchain, the new asset record is rejected from incorporation in the blockchain. In this second case, the issuance record(s) submitted in the same issuance request with the rejected asset record will still be verified by the bitmarkd nodes, even though the accompanying asset record was rejected. If the corresponding issuance records are successfully verified by the bitmarkd nodes, they will added to the blockchain; however, their `asset` field will point to the original asset record rather than the rejected asset record that was submitted with the issuance request. 
 
@@ -163,17 +163,17 @@ Possible error messages include:
 
     + assets: (array, required) - Accepts an array of multiple asset records within a single issuance request. Note that the value for the `assets` key in the issuance request may be assigned an empty array value in cases when an issuance request is made for an asset that already exists in the blockchain.
         + Default: []
-    + fingerprint: test_fingerprint (string, required) - Unique identifier for the asset record in the blockchain.  Maximum length is 1,024 Unicode characters.
+    + fingerprint: (string, required) - Unique identifier for the asset record in the blockchain.  Maximum length is 1,024 Unicode characters.
     + name: testcase (string, required) - The registered name of the asset. Maximum length: 64 Unicode characters.
     + metadata:  (string, optional) - Optional key-value dictionary represented by a maximum 1,024-Unicode characters string with the following format: `[key][separator][value][separator][key][separator][value]` with the Unicode character `0x0000` as the separator token.
     + registrant: e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU (string, required) - Public key ([Ed25519](https://ed25519.cr.yp.to/)) of the account registering the asset.
-    + signature: 68cbccfd732e494b827aadfa7546de73d4f0c3e69ce1d5ff81d100e2fdc05696969f193a024c9f77ae79900252304c84f0ebdffee2f01b117713a58afb006d06 (string, required) - String value of signed hash for the asset record.
+    + signature: (string, required) - String value of signed hash for the asset record.
     + issues: (array, required) - Accepts an array of multiple issuance records within a single issuance request. Note that, unlike the `assets` object which can consist of an empty array value, the `issues` array must contain at least one issuance record.
         + Default: []
-    + asset: e3edef121b7dd0e30f389716cae89a1589335d7d8aa9fe3802f8b19f19505077ff13a21f4c3374c1f188dd9fe13fcab39f2690e1fdae54473a850e8dc519e882 (string, required) - [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash guarantees a consistent `asset` value string length and format regardless of the original format of the asset fingerprint.
+    + asset: (string, required) - [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash guarantees a consistent `asset` value string length and format regardless of the original format of the asset fingerprint.
     + nonce: 1499245158002 (uint64, required) - A counter value that distinguishes between different issuances for the same `asset` value.
     + owner: e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU (string, required) - Public key representing of the account holder issuing the bitmark.
-    + signature: d7cfb3f008000bffae32b98df6bacf8b5a068d4d29ebc114666fbf354be1c81725bcfb1124613e4dcfdc9674019b0723c4aebe32d4f3ed246dde19176c111308 (string, required) - String value of signed hash for the issuance record. 
+    + signature: (string, required) - String value of signed hash for the issuance record. 
 
 + Request (application/json)
 
