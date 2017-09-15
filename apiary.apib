@@ -172,7 +172,7 @@ Possible error messages include:
         + Default: []
     + asset: (string, required) - [SHA3-512 hash](https://en.wikipedia.org/wiki/SHA-3) (64 bytes) of the corresponding asset record's `fingerprint` value. The SHA3-512 hash guarantees a consistent `asset` value string length and format regardless of the original format of the asset fingerprint.
     + nonce: 1499245158002 (uint64, required) - A counter value that distinguishes between different issuances for the same `asset` value.
-    + owner: e1m7c2amjuTYrRf18LyDHContyYo27Vw2PpeKdryWZmasZBnWU (string, required) - Public key representing of the account holder issuing the bitmark.
+    + owner: (string, required) - Public key representing of the account holder issuing the bitmark.
     + signature: (string, required) - String value of signed hash for the issuance record. 
 
 + Request (application/json)
