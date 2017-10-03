@@ -1,13 +1,13 @@
 FORMAT: 1A
 HOST: https://api.test.bitmark.com/v1/
 
-# Bitmark Core API 
+# Bitmark API 
 
 ## Overview
 
 Bitmark makes simple tools that empower anyone to assert ownership over their digital lives. Although digital assets increasingly constitute what we create and value most, there is no way for individuals to claim ownership of them. By building a universal digital property system, Bitmark envisions a world in which everyone owns a piece of the digital economy. 
 
-The Bitmark Core API is an open REST API that enables creation, transfer, and authentication of digital properties in the Bitmark property system. The Core API's simplified interface allows developers to easily build on the core Bitmark infrastructure by reading from and writing to the open-source Bitmark blockchain.
+The Bitmark API is an open REST API that enables creation, transfer, and authentication of digital properties in the Bitmark property system. The API's simplified interface allows developers to easily build on the core Bitmark infrastructure by reading from and writing to the open-source Bitmark blockchain.
 
 ### What is property? 
 
@@ -53,7 +53,7 @@ For a more detailed technical description of the Bitmark property system, please
 
 ## Version & Base URL 
 
-This document refers to the current version of the Bitmark Core API, which is identified as: 
+This document refers to the current version of the Bitmark API, which is identified as: 
 
 ```
 v1.0
@@ -64,14 +64,14 @@ All URLs referenced in this document have the following base URL:
 ```
 https://api.test.bitmark.com/v1/
 ```
-The Bitmark Core API is served over the [HTTPS protocol](https://en.wikipedia.org/wiki/HTTPS) to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
+The Bitmark API is served over the [HTTPS protocol](https://en.wikipedia.org/wiki/HTTPS) to ensure data privacy and security. Unencrypted HTTP requests are not supported. 
 
 
 # Group Issuance
 
 ## Introduction 
 
-The Bitmark Core API supports bitmark issuance requests, which is the process for creating new digital properties. Since a digital property is defined as an asset plus a bitmark, issuance is also the process by which new asset records are registered in the Bitmark blockchain. Issuing a bitmark for an asset creates a new digital property with a permananent reference to the corresponding asset record. This permananent link between issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
+The Bitmark API supports bitmark issuance requests, which is the process for creating new digital properties. Since a digital property is defined as an asset plus a bitmark, issuance is also the process by which new asset records are registered in the Bitmark blockchain. Issuing a bitmark for an asset creates a new digital property with a permananent reference to the corresponding asset record. This permananent link between issuance records and asset records allows any bitmark and asset to be authenticated into perpetuity. Multiple bitmarks can be issued for the same asset, thereby creating different properties from the same digital object. 
 
 As a means for avoiding data duplication and thereby minimizing blockchain size, an asset can only be registered once in the Bitmark blockchain. Every time an asset record is submitted to the Bitmark network, the bitmarkd nodes check the asset record's `fingerprint` field to determine whether an asset record with that fingerprint value already exists in the blockchain. If the asset record doesn't exist, the record is added to current block of the blockchain along with its accompanying issuance record (assuming the issuance record is also verified by the network). 
 
@@ -240,7 +240,7 @@ Possible error messages include:
 
 ## Introduction 
 
-Bitmark Core API supports bitmark transfer requests, which is the process of transferring bitmark ownership from one Bitmark account to another. 
+Bitmark API supports bitmark transfer requests, which is the process of transferring bitmark ownership from one Bitmark account to another. 
 
 ### Transfer request [POST /transfer]
 
@@ -667,7 +667,7 @@ Note: Currently only the first 100 latest assets are returned
 
 # Group Accounts
 
-Within the Bitmark system, an **account** represents any entity capable of creating and owning property, whether individuals, insitutions, or organizations. At the level of the Bitmark blockchian and Core API, accounts do not exist as native standalone objects. Instead, accounts are found as attribute values in each of the three types of blockchain records (asset records, bitmark issuance records, and bitmark transfer records) or as digital signatures appended to each of these record types. Within the Bitmark system, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. Each keypair is the combination of 32-random-byte seed (or private key) and a corresponding 32-byte public key.
+Within the Bitmark system, an **account** represents any entity capable of creating and owning property, whether individuals, insitutions, or organizations. At the level of the Bitmark blockchian and API, accounts do not exist as native standalone objects. Instead, accounts are found as attribute values in each of the three types of blockchain records (asset records, bitmark issuance records, and bitmark transfer records) or as digital signatures appended to each of these record types. Within the Bitmark system, an account is represented by a [public-private keypair](https://en.wikipedia.org/wiki/Public-key_cryptography). The Bitmark system currently uses the [Ed25519 signature scheme](https://ed25519.cr.yp.to/) to generate account keypairs. Each keypair is the combination of 32-random-byte seed (or private key) and a corresponding 32-byte public key.
 
 ## Public keys
 
