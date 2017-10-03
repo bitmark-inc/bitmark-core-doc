@@ -47,7 +47,7 @@ Subsequent transfers of ownership are recorded by submitting **transfer records*
 
 As an example, consider the figure above, in which Alice submits an issuance request for a specific digital asset. Since Alice's issuance request is for an asset that was not previously registered in the blockchain, the request contains both a digitally signed issuance record for the new bitmark and a digitally signed asset record for the new asset. This initial issuance record lists Alice herself as the initial bitmark owner. Once the asset and issuance records have been verified by the Bitmark network, they are aggregated into the latest block of the Bitmark blockchain (let’s say block 13). 
 
-When Alice later wishes to transfer ownership of the bitmarked property to Bob, Alice signs and submits a transfer record that contains a link back to her previous issuance record and designates Bob as the new owner. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. 
+When Alice later wishes to transfer ownership of the property to Bob, she signs and submits a transfer record that contains a link back to her previous issuance record and designates Bob as the new owner. Once this transfer record has been verified by the network to contain an authentic signature from the current owner (Alice), the transfer record is recorded in block 20 of the blockchain, at which point ownership passes to Bob. This method of requiring the current owner to digitally sign ownership transfers creates an incorruptible chain of title for a property. 
 
 For a more detailed technical description of the Bitmark property system, please see the [Bitmark technical white paper](https://bitmark.com/assets/bitmark_technical-white-paper.pdf).
 
@@ -301,7 +301,7 @@ Possible error messages include:
     + link: (string, required) - [SHA3-256 hash](https://en.wikipedia.org/wiki/SHA-3) (32 bytes) of the most recently confirmed record (including signature) for the bitmark you wish to transfer. This hash will be identical to the bitmark_id for the most recently confirmed record. The most recently confirmed record may be either an issuance record or another transfer record.
     + owner: (string, required) - Public key of the account receiving the bitmark transfer.
     + signature: (string, required) - String value of signed hash of the transfer record.
-    + payment: "" (string, optional) - Optional payment object. Currency code (Bitcoin is `0x01`) plus payment address (string) plus amount. 
+    + payment: (string, optional) - Optional payment object. Currency code (Bitcoin is `0x01`) plus payment address (string) plus amount. 
 
 + Request (application/json)
 
