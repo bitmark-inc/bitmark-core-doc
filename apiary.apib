@@ -443,8 +443,8 @@ Get all the bitmarks that changed in a specific range of time that match the giv
 | `owner_sent`  | boolean <br> *optional* | Includes bitmarks which are sent from this account. |
 | `asset`  | boolean <br> *optional* | Includes bitmarks' corresponding asset records. Default value: `false`. |
 | `pending`  | boolean <br> *optional* | Whether to take pending transactions into account. Default value: `false`. |
-| `direction`  | enum[string] <br> *optional* | Specify which direction to return the bitmarks. Possible values: `up`, `down`.  Default value: `down`. |
-| `offset`  | string <br> *optional* | Offset from which the bitmarks are returned. |
+| `to`  | enum[string] <br> *optional* | Determines the returned bitmarks are changed earlier or later than the bitmark record with the offset specified by the next parameter `at`. Possible values: `earlier`, `later`.  Default value: `earlier`. |
+| `at`  | string <br> *optional* | Offset from which the bitmarks are returned. |
 | `limit`  | number <br> *optional* | Optional parameter to limit the number of bitmarks returned for the specified parameters. Maximum value: `100`. |
 
 
@@ -457,12 +457,12 @@ Get all the bitmarks that changed in a specific range of time that match the giv
         + Default: false
     + pending: true (boolean, optional) - Whether the api should take pending bitmark into account
         + Default: false
-    + direction: up (enum[string], optional)
-        + Default: down
+    + to: earlier (enum[string], optional)
+        + Default: earlier
         + Members
-            + up
-            + down
-    + offset: `139356` (number, optional) - The offset from which the bitmarks are returned. E.g: To get a list of bitmarks that an account is owning, you first make the requestion with omitting offset. After getting a list of bitmarks, take the last bitmark offset `139356`, and then call the API again with this offset, you can get the next batch of bitmarks.
+            + earlier
+            + later
+    + at: `139356` (number, optional) - The offset from which the bitmarks are returned. E.g: To get a list of bitmarks that an account is owning, you first make the requestion with omitting offset. After getting a list of bitmarks, take the last bitmark offset `139356`, and then call the API again with this offset, you can get the next batch of bitmarks.
     + limit: 100 {number, optional) - limit the items returned, maximum is 100
 
 + Request
